@@ -76,7 +76,7 @@ freezegun==0.3.11
 fs==2.4.16
 future==0.18.2
 gcloud==0.18.3
-GDAL @ file:///C:/Users/CC/Downloads/GDAL-3.4.2-cp37-cp37m-win_amd64.whl
+GDAL
 gdown==4.6.0
 geeadd==0.5.6
 geemap==0.19.1
