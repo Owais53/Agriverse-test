@@ -179,7 +179,7 @@ pywin32==304
 pyzk==0.9
 pyzmq==24.0.1
 qrcode==6.1
-rasterio @ file:///C:/Users/CC/Downloads/rasterio-1.2.10-cp37-cp37m-win_amd64.whl
+rasterio
 ratelim==0.1.6
 redis==4.3.4
 reportlab==3.5.13
