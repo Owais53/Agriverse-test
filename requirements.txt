@@ -63,7 +63,7 @@ fonttools==4.38.0
 freezegun==0.3.11
 fs==2.4.16
 future==0.18.2
-gcloud==0.18.3
+Gdal==1.10.0
 gdown==4.6.0
 geeadd==0.5.6
 geemap==0.19.1
@@ -162,10 +162,8 @@ PyTikTokAPI==0.0.5
 pytz==2019.1
 pytz-deprecation-shim==0.1.0.post0
 pyusb==1.0.2
-pywin32==304
 pyzk==0.9
 pyzmq==24.0.1
-qrcode==6.1
 ratelim==0.1.6
 redis==4.3.4
 reportlab==3.5.13
