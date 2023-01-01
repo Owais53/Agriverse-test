@@ -7,6 +7,7 @@ Copyright (c) 2019 - present AppSeed.us
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm, SignUpForm
+from .models import Company
 
 
 def login_view(request):
@@ -28,7 +29,7 @@ def login_view(request):
         else:
             msg = 'Error validating the form'
 
-    return render(request, "accounts/login.html", {"form": form, "msg": msg})
+    return render(request, "accounts/login-new.html", {"form": form, "msg": msg})
 
 
 def register_user(request):
@@ -41,8 +42,10 @@ def register_user(request):
             form.save()
             username = form.cleaned_data.get("username")
             raw_password = form.cleaned_data.get("password1")
+            company_name = form.cleaned_data.get("company")
             user = authenticate(username=username, password=raw_password)
-
+            company = Company(user=user,company=company_name)
+            company.save()
             msg = 'User created - please <a href="/login">login</a>.'
             success = True
 
@@ -53,4 +56,4 @@ def register_user(request):
     else:
         form = SignUpForm()
 
-    return render(request, "accounts/register.html", {"form": form, "msg": msg, "success": success})
+    return render(request, "accounts/register-new.html", {"form": form, "msg": msg, "success": success})

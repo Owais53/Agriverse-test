@@ -10,56 +10,108 @@
      crossorigin=""/>
      
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
 
+
+.form-inline {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+}
+
+/* Add some margins for each label */
+.form-inline label {
+  margin: 5px 10px 5px 0;
+}
+
+/* Style the input fields */
+.form-inline select {
+  vertical-align: middle;
+  margin: 5px 10px 5px 0;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+/* Style the submit button */
+.form-inline button {
+  padding: 10px 20px;
+  background-color: dodgerblue;
+  border: 1px solid #ddd;
+  color: white;
+}
+
+.form-inline button:hover {
+  background-color: royalblue;
+}
+
+/* Add responsiveness - display the form controls vertically instead of horizontally on screens that are less than 800px wide */
+@media (max-width: 800px) {
+  .form-inline input {
+    margin: 10px 0;
+  }
+
+  .form-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+</style>
 {% endblock stylesheets %}
 
 {% block content %}
 
 <div class="row">
+  <form method="post" class="form-inline" action="">
+    {% csrf_token %}
+    <div>
+      <label>Order No</label>
+      <select id="orders_ddl"  name="selected_order" onchange="map_update()">
+        <option value="none">None</option>
+        <option value="6f32f9ce-5266-4d68-b6f1-b314e31a071f" selected>3103</option>
+        <option value="30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f">3099</option>
+        <option value="6809fe46-5bfc-4c5c-8e90-b267c705be2e">3097</option>
+      </select>
+    </div>
+    <br/>
+    <div>
+      <label>Date</label>
+      <select id="date_ddl"  name="selected_date" onchange="map_update()">
+        <option value="none">None</option>
+        <option value="20221223">23-12-2022</option>
+        <option value="20221224" selected>24-12-2022</option>
+        <option value="20221225">25-12-2022</option>
+      </select>
+    </div>
+    <br/>
+    <div>
+      <label>Field Level</label>
+      <select id="field_level_ddl" name="selected_field_level" onchange="map_update()">
+        <option value="none">None</option>
+        <option value="vegetation_cover">Vegetation Cover (%)</option>
+        <option value="actual_evapotranspiration">Actual Evapotranspiration (mm/d)</option>
+      </select>
+    </div>
+    <br/>
+    
+    <div>
+      <label>Pixel Level</label>
+      <select id="pixel_level_ddl" name="pixel_level_ddl" onchange="map_pixel_update()">
+        <option value="none">None</option>
+        <option value="moisture_status">Moisture Status (-)</option>
+      </select>
+    </div>
+  </form>
   <div class="col-md-12">
     <div class="card card-plain">
       <div class="card-header">
        
       </div>
       <div class="card-body">
-        <form method="post" action="">
-        {% csrf_token %}
-        <div>
-          <label>Order No</label>
-          <select id="orders_ddl"  name="selected_order" onchange="map_update()">
-            <option value="none">None</option>
-            <option value="6f32f9ce-5266-4d68-b6f1-b314e31a071f">3103</option>
-            <option value="30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f">3099</option>
-          </select>
+        <div class="row">
+          
         </div>
-        <br/>
-        <div>
-          <label>Date</label>
-          <select id="date_ddl"  name="selected_date" onchange="map_update()">
-            <option value="none">None</option>
-            <option value="20221223">23-12-2022</option>
-            <option value="20221224">24-12-2022</option>
-          </select>
-        </div>
-        <br/>
-        <div>
-          <label>Field Level</label>
-          <select id="field_level_ddl" name="selected_field_level" onchange="map_update()">
-            <option value="none">None</option>
-            <option value="vegetation_cover">Vegetation Cover (%)</option>
-            <option value="actual_evapotranspiration">Actual Evapotranspiration (mm/d)</option>
-          </select>
-        </div>
-        <br/>
-        
-        <div>
-          <label>Pixel Level</label>
-          <select id="pixel_level_ddl" name="pixel_level_ddl" onchange="map_pixel_update()">
-            <option value="none">None</option>
-            <option value="moisture_status">Moisture Status (-)</option>
-          </select>
-        </div>
-      </form>
+       
       <div id="map"></div>
       <div id="mapload">
         {{ m | safe}}

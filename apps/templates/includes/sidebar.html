@@ -3,9 +3,11 @@
   .services-cont.showS {	
     list-style-type: none;
     display: block;
-    background-color:darkmagenta;
+    background-color:lightgreen;
     }
-  
+   .bar-color{
+    background-color: #006400;
+   }  
   .services-cont.showS li {
       float: none;
       display: inline;
@@ -19,8 +21,8 @@
   
     }
     </style>
-
-    <div class="sidebar">
+    
+    <div class="sidebar bar-color">
       <div class="sidebar-wrapper">
         <div class="logo">
           
@@ -48,20 +50,38 @@
             </a>
           </li>
           <p style="margin-left:10px;">PROFILE</p>
-          <li class="{% if 'notifications' in segment %} active {% endif %}">
+             {% if request.user.company %}
+           <li class="{% if 'notifications' in segment %} active {% endif %}">
             <a href="/ui-notifications.html">
               <i class="tim-icons icon-bell-55"></i>
-              <p style="font-size: 18px;">Company</p>
+              <p style="font-size: 18px;">{{company_name }}</p>
             </a>
-          </li>
-          <li class="{% if 'page-user' in segment %} active {% endif %}">
-            <a href="/page-user.html">
+            </li>
+             {%else%}
+             <li class="{% if 'notifications' in segment %} active {% endif %}">
+               <a href="/ui-notifications.html">
+               <i class="tim-icons icon-bell-55"></i>
+               <p style="font-size: 18px;">Company</p>
+                </a>
+             </li>
+             {%endif%}
+             {% if request.user.username %}
+              <li class="{% if 'page-user' in segment %} active {% endif %}">
+               <a href="/page-user.html">
               <i class="tim-icons icon-single-02"></i>
-              <p style="font-size: 18px;">User</p>
-            </a>
-          </li>
+              <p style="font-size: 18px;">{{request.user.username}}</p>
+                </a>
+              </li>
+              {% else %}
+              <li class="{% if 'page-user' in segment %} active {% endif %}">
+                <a href="/page-user.html">
+               <i class="tim-icons icon-single-02"></i>
+               <p style="font-size: 18px;">User</p>
+                 </a>
+               </li>
+               {%endif%}
           <li class="{% if 'tables' in segment %} active {% endif %}">
-            <a href="javascript:void(0);" onclick="SettingsMenu();">
+              <a href="javascript:void(0);" onclick="SettingsMenu();">
               <i class="tim-icons icon-puzzle-10"></i>
               <p style="font-size: 18px;">Settings</p>
             </a>

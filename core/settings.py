@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'apps.home',
+    'apps.authentication',
     'corsheaders',  # Enable the inner home (home)
 ]
 

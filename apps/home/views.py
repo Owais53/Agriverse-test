@@ -38,6 +38,7 @@ import numpy.ma as ma
 import os
 import ee
 from zipfile import ZipFile, is_zipfile
+from apps.authentication.models import Company
 
 
 
@@ -130,7 +131,9 @@ def index(request):
                )
     line_plot_obj = plot({'data':fig2},output_type='div')
     line_plot_obj1 = plot({'data':fig1},output_type='div')
-    context = {'target_plot': plotly_plot_obj,'line_plot':line_plot_obj,'line_graph':line_plot_obj1}
+    company = Company.objects.get(user=request.user)
+    company_name  = company.company
+    context = {'target_plot': plotly_plot_obj,'line_plot':line_plot_obj,'line_graph':line_plot_obj1,'company_name':company_name}
     return render(request,'home/index.html',context=context)
     
 
@@ -525,12 +528,14 @@ def map(request):
        m = get_pixel_data_from_tif()
   
     m = m._repr_html_()
-       
+    company = Company.objects.get(user=request.user)
+    company_name  = company.company
     context = {
-            'm':m
+            'm':m,
+            'company_name': company_name
         }
     
-    
+  
     return render(request,'home/ui-maps.html',context)
 
 def map_change(request):
@@ -546,6 +551,8 @@ def map_change(request):
      url_company_orders = "https://api.irriwatch.com/api/v1/company/06db5883-48bd-4350-93e7-0e0ae69fe94c/order"
     elif selected_order_val == '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f':
       url_company_orders = "https://api.irriwatch.com/api/v1/company/ac082ccd-4605-4a51-b272-fc4856cade6c/order"  
+    elif selected_order_val == "6809fe46-5bfc-4c5c-8e90-b267c705be2e":
+      url_company_orders = "https://api.irriwatch.com/api/v1/company/ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28/order"
     else:
       url_company_orders = "https://api.irriwatch.com/api/v1/company/06db5883-48bd-4350-93e7-0e0ae69fe94c/order"  
     response_orders = requests.get(url=url_company_orders,headers=headers)
@@ -573,6 +580,14 @@ def map_change(request):
                   api_field_level_data = field_level_api(headers,selected_field_level_val,'ac082ccd-4605-4a51-b272-fc4856cade6c','30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f','20221224') 
              else:
                api_field_level_data = field_level_api(headers,selected_field_level_val,'ac082ccd-4605-4a51-b272-fc4856cade6c',selected_order_val,'20221224')
+          elif selected_order_val == '6809fe46-5bfc-4c5c-8e90-b267c705be2e':
+              if selected_date != False:
+                if selected_date != 'none' and selected_order_val != 'none':
+                 api_field_level_data = field_level_api(headers,selected_field_level_val,'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',selected_order_val,selected_date)
+                else:
+                  api_field_level_data = field_level_api(headers,selected_field_level_val,'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28','6809fe46-5bfc-4c5c-8e90-b267c705be2e','20221224') 
+              else:
+               api_field_level_data = field_level_api(headers,selected_field_level_val,'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',selected_order_val,'20221224')
           else:
               if selected_date != False:
                 if selected_date != 'none' and selected_order_val != 'none':
@@ -665,13 +680,26 @@ def set_range_legend(m,field_level,order,date):
     if field_level:
         if field_level =='vegetation_cover':
             if order == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
+              if date == '20221225':
+                 m = add_categorical_legend(m, 'Field: Vegetation Cover (%)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['90.90', '92.50','94.10','95.70','97.30','98.90'])
+                        
+                 return m
+              else:
                  m = add_categorical_legend(m, 'Field: Vegetation Cover (%)',
                              colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
                              labels = ['87.40', '89.64','91.88','94.12','96.36','98.60'])
                         
                  return m
+            elif order == '6809fe46-5bfc-4c5c-8e90-b267c705be2e':
+                  m = add_categorical_legend(m, 'Field: Vegetation Cover (%)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['65.00', '65.74','66.48','67.22','67.96','68.70'])
+                        
+                  return m
             else:
-                if date == '20221224':
+                if date == '20221224' or date == '20221225':
                   m = add_categorical_legend(m, 'Field: Vegetation Cover (%)',
                              colors = ['#800000'],
                              labels = ['25.30'])
@@ -688,11 +716,33 @@ def set_range_legend(m,field_level,order,date):
                              colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
                              labels = ['1.00','1.04','1.08','1.12','1.16','1.20'])
                  return m
+              elif date == '20221225':
+                 m = add_categorical_legend(m, 'Field: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['1.00','1.04','1.08','1.12','1.16','1.20'])
+                 return m
               else:
                  m = add_categorical_legend(m, 'Field: Actual Evapotranspiration (mm/d)',
                              colors = ['#C70039'],
                              labels = ['0.90'])
                  return m
+            elif order == '6809fe46-5bfc-4c5c-8e90-b267c705be2e':
+               if date == '20221223':
+                  m = add_categorical_legend(m, 'Field: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['2.90','2.96','3.02','3.08','3.14','3.20'])
+                  return m
+               elif date == '20221224':
+                  m = add_categorical_legend(m, 'Field: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['2.80','2.96','3.12','3.28','3.44','3.60'])
+                  return m
+               else:
+                   m = add_categorical_legend(m, 'Field: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['3.40','3.46','3.52','3.58','3.64','3.70'])
+                   return m
+
             else:
                  if date == '20221224':
                    m = add_categorical_legend(m, 'Field: Actual Evapotranspiration (mm/d)',
@@ -714,36 +764,59 @@ def change_field_level_color(field_level,field_uuid,api_field_level_data,selecte
        value_data = field_dict.get(field_uuid)           
        if field_level=='vegetation_cover':
           if selected_order_value == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
-            if value_data >= 98.60:
+            if date == '20221225':
+              if value_data == 90.90:
+                 style_function =  {
+                "fillColor": "#800000",
+                'fillOpacity': 3
+               }
+              elif value_data == 98.90:
+                 style_function =  {
+                "fillColor": "#9D5BB5",
+                'fillOpacity': 3
+                }
+            else:
+              if value_data >= 98.60:
                style_function =  {
                 "fillColor": "#9D5BB5",
                 'fillOpacity': 3
                }
-            elif value_data >= 96.36 and value_data < 98.60:
-              style_function =  {
-               "fillColor": "#B4D9EC",
-               'fillOpacity': 3
-              }
-            elif value_data >= 94.12 and value_data < 96.36:
+              elif value_data >= 96.36 and value_data < 98.60:
+                style_function =  {
+                "fillColor": "#B4D9EC",
+                'fillOpacity': 3
+                }
+              elif value_data >= 94.12 and value_data < 96.36:
                style_function =  {
                "fillColor": "#E2E6A9",
                'fillOpacity': 3
               }
-            elif value_data >= 91.88 and value_data < 94.12:
+              elif value_data >= 91.88 and value_data < 94.12:
                style_function =  {
                "fillColor": "#FFE5B4",
                'fillOpacity': 3
               }
-            elif value_data >= 89.64 and value_data < 91.88:
+              elif value_data >= 89.64 and value_data < 91.88:
                style_function =  {
                "fillColor": "#FFA500",
                'fillOpacity': 3
               }
-            elif value_data >= 87.40 and value_data < 89.64:
+              elif value_data >= 87.40 and value_data < 89.64:
                style_function =  {
                "fillColor": "#800000",
                'fillOpacity': 3
               }
+          elif selected_order_value == '6809fe46-5bfc-4c5c-8e90-b267c705be2e':
+            if value_data == 65.00:
+                style_function =  {
+               "fillColor": "#800000",
+               'fillOpacity': 3
+                 } 
+            else:
+               style_function =  {
+               "fillColor": "#9D5BB5",
+               'fillOpacity': 3
+                 } 
           else:
             if value_data == 25.30:
                   style_function =  {
@@ -788,13 +861,76 @@ def change_field_level_color(field_level,field_uuid,api_field_level_data,selecte
                         "fillColor": "#9D5BB5",
                          'fillOpacity': 3
                     }
-
+            elif date == '20221225':
+                if value_data == 1.00:
+                    style_function =  {
+                        "fillColor": "#800000",
+                         'fillOpacity': 3
+                    }
+                elif value_data == 1.04:
+                     style_function =  {
+                        "fillColor": "#FFA500",
+                         'fillOpacity': 3
+                    }
+                elif value_data == 1.08:
+                     style_function =  {
+                        "fillColor": "#FFE5B4",
+                         'fillOpacity': 3
+                    }
+                elif value_data == 1.12:
+                    style_function =  {
+                        "fillColor": "#E2E6A9",
+                         'fillOpacity': 3
+                    }
+                elif value_data == 1.16:
+                     style_function =  {
+                        "fillColor": "#B4D9EC",
+                         'fillOpacity': 3
+                    }
+                elif value_data == 1.20:
+                      style_function =  {
+                        "fillColor": "#9D5BB5",
+                         'fillOpacity': 3
+                    }
             else:
                  style_function =  {
                  "fillColor": "#C70039",
                  'fillOpacity': 3
               }
-                
+         elif selected_order_value == '6809fe46-5bfc-4c5c-8e90-b267c705be2e':
+           if date == '20221223':
+                if value_data == 2.90:
+                     style_function =  {
+                       "fillColor": "#800000",
+                        'fillOpacity': 3
+                     } 
+                else:
+                     style_function =  {
+                       "fillColor": "#9D5BB5",
+                        'fillOpacity': 3
+                     } 
+           elif date == '20221224':
+                if value_data == 2.80:
+                  style_function =  {
+                       "fillColor": "#800000",
+                        'fillOpacity': 3
+                     } 
+                else:
+                  style_function =  {
+                       "fillColor": "#9D5BB5",
+                        'fillOpacity': 3
+                     } 
+           else:
+              if value_data == 3.40:
+                 style_function =  {
+                       "fillColor": "#800000",
+                        'fillOpacity': 3
+                     } 
+              else:
+                 style_function =  {
+                       "fillColor": "#9D5BB5",
+                        'fillOpacity': 3
+                     } 
          else:
             style_function =  {
                "fillColor": "#800000",
