@@ -352,87 +352,87 @@ def get_pixel_data_from_tif(selected_order_val,selected_date,selected_pixel_leve
     if selected_order_val == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
       if selected_pixel_level_val == 'moisture_status':
         if selected_date == '20221223':
-          ds = gdal.Open('/opt/Agriverse-test/Geotiff/2022-12-23 3103 ms.tif')
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 ms2.tif') 
+          ds = gdal.Open('2022-12-23 3103 ms.tif')
+          ds1 = gdal.Open('2022-12-23 3103 ms2.tif') 
         elif selected_date == '20221224':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 ms.tif') 
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 ms2.tif')
+          ds = gdal.Open('2022-12-24 3103 ms.tif') 
+          ds1 = gdal.Open('2022-12-24 3103 ms2.tif')
         else:
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3103 ms.tif')
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3103 ms2.tif') 
+          ds = gdal.Open('2022-12-25 3103 ms.tif')
+          ds1 = gdal.Open('2022-12-25 3103 ms2.tif') 
       elif selected_pixel_level_val == 'vegetation_cover':
         if selected_date == '20221223':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 vc.tif') 
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 vc2.tif') 
+          ds = gdal.Open('2022-12-23 3103 vc.tif') 
+          ds1 = gdal.Open('2022-12-23 3103 vc2.tif') 
         elif selected_date == '20221224':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 vc.tif') 
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 vc2.tif') 
+          ds = gdal.Open('2022-12-24 3103 vc.tif') 
+          ds1 = gdal.Open('2022-12-24 3103 vc2.tif') 
         else:
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3103 vc.tif') 
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3103 vc2.tif') 
+          ds = gdal.Open('2022-12-25 3103 vc.tif') 
+          ds1 = gdal.Open('2022-12-25 3103 vc2.tif') 
       else:
         if selected_date == '20221223':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 ae.tif') 
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 ae2.tif') 
+          ds = gdal.Open('2022-12-23 3103 ae.tif') 
+          ds1 = gdal.Open('Geotiff/2022-12-23 3103 ae2.tif') 
         elif selected_date == '20221224':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 ae.tif') 
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 ae2.tif') 
+          ds = gdal.Open('2022-12-24 3103 ae.tif') 
+          ds1 = gdal.Open('2022-12-24 3103 ae2.tif') 
         else:
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3103 ae.tif') 
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3103 ae2.tif')
+          ds = gdal.Open('2022-12-25 3103 ae.tif') 
+          ds1 = gdal.Open('2022-12-25 3103 ae2.tif')
     elif selected_order_val == '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f':
        if selected_pixel_level_val == 'moisture_status':
         if selected_date == '20221223':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3099 ms.tif')
+          ds = gdal.Open('2022-12-23 3099 ms.tif')
         elif selected_date == '20221224':
-           ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3099 ms.tif')
+           ds = gdal.Open('2022-12-24 3099 ms.tif')
         else:
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3099 ms.tif')
+          ds = gdal.Open('2022-12-25 3099 ms.tif')
        elif selected_pixel_level_val == 'vegetation_cover':
         if selected_date == '20221223':
-           ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3099 vc.tif')
+           ds = gdal.Open('2022-12-23 3099 vc.tif')
         elif selected_date == '20221224':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3099 vc.tif')
+          ds = gdal.Open('2022-12-24 3099 vc.tif')
         else:
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3099 vc.tif')
+          ds = gdal.Open('2022-12-25 3099 vc.tif')
        else:
          if selected_date == '20221223':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3099 ae.tif')
+          ds = gdal.Open('2022-12-23 3099 ae.tif')
          elif selected_date == '20221224':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3099 ae.tif')
+          ds = gdal.Open('2022-12-24 3099 ae.tif')
          else:  
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3099 ae.tif')
+          ds = gdal.Open('2022-12-25 3099 ae.tif')
     else:
        if selected_pixel_level_val == 'moisture_status':
         if selected_date == '20221223':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3097 ms.tif')
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3097 ms2.tif')
+          ds = gdal.Open('2022-12-23 3097 ms.tif')
+          ds1 = gdal.Open('2022-12-23 3097 ms2.tif')
         elif selected_date == '20221224':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3097 ms.tif')
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3097 ms2.tif')
+          ds = gdal.Open('2022-12-24 3097 ms.tif')
+          ds1 = gdal.Open('2022-12-24 3097 ms2.tif')
         else:
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3097 ms.tif')
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3097 ms2.tif')
+          ds = gdal.Open('2022-12-25 3097 ms.tif')
+          ds1 = gdal.Open('2022-12-25 3097 ms2.tif')
        elif selected_pixel_level_val == 'vegetation_cover':
         if selected_date == '20221223':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3097 vc.tif')
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3097 vc2.tif')
+          ds = gdal.Open('2022-12-23 3097 vc.tif')
+          ds1 = gdal.Open('2022-12-23 3097 vc2.tif')
         elif selected_date == '20221224':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3097 vc.tif')
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3097 vc2.tif')
+          ds = gdal.Open('2022-12-24 3097 vc.tif')
+          ds1 = gdal.Open('2022-12-24 3097 vc2.tif')
         else:
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3097 vc.tif')
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3097 vc2.tif')
+          ds = gdal.Open('2022-12-25 3097 vc.tif')
+          ds1 = gdal.Open('2022-12-25 3097 vc2.tif')
        else:
         if selected_date == '20221223':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3097 ae.tif')
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3097 ae2.tif')
+          ds = gdal.Open('2022-12-23 3097 ae.tif')
+          ds1 = gdal.Open('2022-12-23 3097 ae2.tif')
         elif selected_date == '20221224':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3097 ae.tif')
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3097 ae2.tif')
+          ds = gdal.Open('2022-12-24 3097 ae.tif')
+          ds1 = gdal.Open('2022-12-24 3097 ae2.tif')
         else:
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3097 ae.tif')
-          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3097 ae2.tif')
+          ds = gdal.Open('2022-12-25 3097 ae.tif')
+          ds1 = gdal.Open('2022-12-25 3097 ae2.tif')
     #band1[0:10,0:10] = 0
     
       
