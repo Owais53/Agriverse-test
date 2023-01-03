@@ -352,7 +352,7 @@ def get_pixel_data_from_tif(selected_order_val,selected_date,selected_pixel_leve
     if selected_order_val == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
       if selected_pixel_level_val == 'moisture_status':
         if selected_date == '20221223':
-          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 ms.tif')
+          ds = gdal.Open('/opt/Agriverse-test/Geotiff/2022-12-23 3103 ms.tif')
           ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 ms2.tif') 
         elif selected_date == '20221224':
           ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 ms.tif') 
