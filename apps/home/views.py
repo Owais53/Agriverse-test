@@ -4,6 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from django import template
+import os.path
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -131,8 +132,14 @@ def index(request):
                )
     line_plot_obj = plot({'data':fig2},output_type='div')
     line_plot_obj1 = plot({'data':fig1},output_type='div')
-    company = Company.objects.get(user=request.user)
-    company_name  = company.company
+    try:
+      company = Company.objects.get(user=request.user)
+    except Company.DoesNotExist:
+      company = 'Company'
+    if company == 'Company':
+      company_name = 'Company'
+    else:      
+      company_name  = company.company
     context = {'target_plot': plotly_plot_obj,'line_plot':line_plot_obj,'line_graph':line_plot_obj1,'company_name':company_name}
     return render(request,'home/index.html',context=context)
     
@@ -188,10 +195,10 @@ def add_categorical_legend(folium_map, title, colors, labels):
                     return function() {{
                         if (!executed) {{
                              var checkExist = setInterval(function() {{
-                                       if ((document.getElementsByClassName('leaflet-bottom leaflet-left').length) || (!executed)) {{
-                                          document.getElementsByClassName('leaflet-bottom leaflet-left')[0].style.display = "flex"
-                                          document.getElementsByClassName('leaflet-bottom leaflet-left')[0].style.flexDirection = "column"
-                                          document.getElementsByClassName('leaflet-bottom leaflet-left')[0].innerHTML += `{legend_html}`;
+                                       if ((document.getElementsByClassName('leaflet-top leaflet-right').length) || (!executed)) {{
+                                          document.getElementsByClassName('leaflet-top leaflet-right')[0].style.display = "flex"
+                                          document.getElementsByClassName('leaflet-top leaflet-right')[0].style.flexDirection = "column"
+                                          document.getElementsByClassName('leaflet-top leaflet-right')[0].innerHTML += `{legend_html}`;
                                           clearInterval(checkExist);
                                           executed = true;
                                        }}
@@ -276,8 +283,8 @@ def pixel_level_api():
     token = get_oauth2_token()
     headers = {"accept":"application/json","authorization":"Bearer "+token+""}
     url_result_uuids ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result'.format(
-    company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',
-    order_uuid = '6f32f9ce-5266-4d68-b6f1-b314e31a071f'
+    company_uuid = 'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',
+    order_uuid = '6809fe46-5bfc-4c5c-8e90-b267c705be2e'
      )
     result_uuid_result = []
     result_uuids_response = requests.get(url = url_result_uuids,headers = headers)
@@ -304,16 +311,16 @@ def pixel_level_api():
     #bucket.delete_blobs(blobs=list(blobs))
    
     url_tiff_data ='https://portal.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{result_uuid}'.format(
-         company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',
-         order_uuid = '6f32f9ce-5266-4d68-b6f1-b314e31a071f',
-         result_uuid = '83c44bcf-7a35-3526-7961-c92d43b33f97'
+         company_uuid = 'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',
+         order_uuid = '6809fe46-5bfc-4c5c-8e90-b267c705be2e',
+         result_uuid = 'dc748211-d3db-f575-996b-5d8e26d6e35f'
          )
     tiff_data_response = requests.get(
          url = url_tiff_data,
          headers = headers
          )
     zipfile_data = zipfile.ZipFile(io.BytesIO(tiff_data_response.content)) 
-    path_to_save = 'C:/Users/CC/Desktop/irriwatch api doc/zip/order'
+    path_to_save = 'C:/Users/CC/Desktop/irriwatch api doc/zip/3097 2022-12-25'
           # extract all zipped data to given path
     zipfile_data.extractall(path_to_save)   
          #blob = bucket.blob(zipfile_data)
@@ -336,67 +343,150 @@ def zipextract(zipfile,cred,data):
 
 
 
-def get_pixel_data_from_tif(order_results):
-   
-    
-    #band1[0:10,0:10] = 0
+def get_pixel_data_from_tif(selected_order_val,selected_date,selected_pixel_level_val,order_results):
     driver=gdal.GetDriverByName('GTiFF')
     driver.Register() 
-    ds = gdal.Open('Geoband10.tif') 
-    if ds is None:
-       print('Could not open')
-#Get coordinates, cols and rows
-    geotransform = ds.GetGeoTransform()
-    proj = ds.GetProjection()
+    SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+    PROJECT_PATH = os.path.abspath(os.path.dirname(__name__))
+    ds1 = None
+    if selected_order_val == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
+      if selected_pixel_level_val == 'moisture_status':
+        if selected_date == '20221223':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 ms.tif')
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 ms2.tif') 
+        elif selected_date == '20221224':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 ms.tif') 
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 ms2.tif')
+        else:
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3103 ms.tif')
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3103 ms2.tif') 
+      elif selected_pixel_level_val == 'vegetation_cover':
+        if selected_date == '20221223':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 vc.tif') 
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 vc2.tif') 
+        elif selected_date == '20221224':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 vc.tif') 
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 vc2.tif') 
+        else:
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3103 vc.tif') 
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3103 vc2.tif') 
+      else:
+        if selected_date == '20221223':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 ae.tif') 
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3103 ae2.tif') 
+        elif selected_date == '20221224':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 ae.tif') 
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3103 ae2.tif') 
+        else:
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3103 ae.tif') 
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3103 ae2.tif')
+    elif selected_order_val == '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f':
+       if selected_pixel_level_val == 'moisture_status':
+        if selected_date == '20221223':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3099 ms.tif')
+        elif selected_date == '20221224':
+           ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3099 ms.tif')
+        else:
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3099 ms.tif')
+       elif selected_pixel_level_val == 'vegetation_cover':
+        if selected_date == '20221223':
+           ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3099 vc.tif')
+        elif selected_date == '20221224':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3099 vc.tif')
+        else:
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3099 vc.tif')
+       else:
+         if selected_date == '20221223':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3099 ae.tif')
+         elif selected_date == '20221224':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3099 ae.tif')
+         else:  
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3099 ae.tif')
+    else:
+       if selected_pixel_level_val == 'moisture_status':
+        if selected_date == '20221223':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3097 ms.tif')
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3097 ms2.tif')
+        elif selected_date == '20221224':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3097 ms.tif')
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3097 ms2.tif')
+        else:
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3097 ms.tif')
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3097 ms2.tif')
+       elif selected_pixel_level_val == 'vegetation_cover':
+        if selected_date == '20221223':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3097 vc.tif')
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3097 vc2.tif')
+        elif selected_date == '20221224':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3097 vc.tif')
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3097 vc2.tif')
+        else:
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3097 vc.tif')
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3097 vc2.tif')
+       else:
+        if selected_date == '20221223':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3097 ae.tif')
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-23 3097 ae2.tif')
+        elif selected_date == '20221224':
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3097 ae.tif')
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-24 3097 ae2.tif')
+        else:
+          ds = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3097 ae.tif')
+          ds1 = gdal.Open(''+PROJECT_PATH+'\Geotiff/2022-12-25 3097 ae2.tif')
+    #band1[0:10,0:10] = 0
     
-    cols = ds.RasterXSize 
-    rows = ds.RasterYSize 
-    
-    r = gdal.Info('Geoband10.tif', format='json')
-    meta = r['metadata']['']
-    
-
-#Get extent
-    xmin=geotransform[0]
-    ymax=geotransform[3]
-    xmax=xmin+cols*geotransform[1]
-    ymin=ymax+rows*geotransform[5]
-  
-   
-    #Get Central point
-    centerx=(xmin+xmax)/2
-    centery=(ymin+ymax)/2
-
-    #Raster convert to array in numpy
-    bands = ds.RasterCount
-    
-    
-    r = ds.GetRasterBand(1).ReadAsArray()
-    g = ds.GetRasterBand(2).ReadAsArray()
-    b = ds.GetRasterBand(3).ReadAsArray()
-    a = ds.GetRasterBand(4).ReadAsArray()
-   
-    r = scaleMinMax(r)
-    g = scaleMinMax(g)
-    b = scaleMinMax(b)
-
-    rgb =np.dstack((r,g,b,a))
-    
-    
-# set color table and color interpretation
-    count=0
+      
+    if ds is not None:
+      geotransform = ds.GetGeoTransform()
+      cols = ds.RasterXSize 
+      rows = ds.RasterYSize 
+      xmin=geotransform[0]
+      ymax=geotransform[3]
+      xmax=xmin+cols*geotransform[1]
+      ymin=ymax+rows*geotransform[5]
+      centerx=(xmin+xmax)/2
+      centery=(ymin+ymax)/2
+      bands = ds.RasterCount
+      r = ds.GetRasterBand(1).ReadAsArray()
+      g = ds.GetRasterBand(2).ReadAsArray()
+      b = ds.GetRasterBand(3).ReadAsArray()
+      a = ds.GetRasterBand(4).ReadAsArray()
+      rgb =np.dstack((r,g,b,a))
+    if ds1 is not None:
+      geotransform1 = ds1.GetGeoTransform()
+      cols1 = ds1.RasterXSize 
+      rows1 = ds1.RasterYSize 
+      xmin1=geotransform1[0]
+      ymax1=geotransform1[3]
+      xmax1=xmin1+cols1*geotransform1[1]
+      ymin1=ymax1+rows1*geotransform1[5]
+      centerx1=(xmin1+xmax1)/2
+      centery1=(ymin1+ymax1)/2
+      bands1 = ds1.RasterCount
+      r1 = ds1.GetRasterBand(1).ReadAsArray()
+      g1 = ds1.GetRasterBand(2).ReadAsArray()
+      b1 = ds1.GetRasterBand(3).ReadAsArray()
+      a1 = ds1.GetRasterBand(4).ReadAsArray()
+     
+      rgb1 =np.dstack((r1,g1,b1,a1))
+     
+    count = 0
     map= folium.Map(location=[centery, centerx], zoom_start=7,tiles='openstreetmap')
     for i in order_results[0]['fields']['features']:
-     fields_geojson = order_results[0]['fields']['features'][count]['geometry']
-     folium.GeoJson(fields_geojson).add_to(map)  
-     count += 1 
-    map.fit_bounds(map.get_bounds(), padding=(10, 10))            
+        fields_geojson = order_results[0]['fields']['features'][count]['geometry']
+        folium.GeoJson(fields_geojson,style_function=lambda x:{'fillOpacity': 0}).add_to(map)
+        count += 1
     image = folium.raster_layers.ImageOverlay(
-        rgb,opacity=1, bounds=[[ymin,xmin],[ymax,xmax]],colormap=lambda x: (1,0,x,x)
-    )
+          rgb,opacity=3, bounds=[[ymin,xmin],[ymax,xmax]]
+      )
     image.add_to(map) 
-    
-    
+    map.fit_bounds(map.get_bounds(), padding=(10, 10)) 
+    if ds1 is not None:           
+      image = folium.raster_layers.ImageOverlay(
+      rgb1,opacity=3, bounds=[[ymin1,xmin1],[ymax1,xmax1]]
+       )
+      image.add_to(map)
+     
     return map
 
 def scaleMinMax(x):
@@ -420,14 +510,18 @@ def field_level_api(headers,field_level,companyid,orderid,date):
     vegetation_cover_list = []
     field_uuid_list = []
     actual_evapotranspiration_list = []
+    applied_water_cumulative_list = []
     for i in field_level_res:
         field_uuid = i     
         field_level_vals = field_level_res[field_uuid]         
         field_uuid_list.append(field_uuid)
         vegetation_cover_list.append(field_level_vals['vegetation_cover'])
         actual_evapotranspiration_list.append(field_level_vals['actual_evapotranspiration'])
+        applied_water_cumulative_list.append(field_level_vals['irrigation_amount_cumulative']) 
     if field_level=='vegetation_cover':
       return field_uuid_list,vegetation_cover_list
+    elif field_level == 'irrigation_amount_cumulative':
+      return field_uuid_list,applied_water_cumulative_list
     else:
       return field_uuid_list,actual_evapotranspiration_list
 
@@ -528,8 +622,14 @@ def map(request):
        m = get_pixel_data_from_tif()
   
     m = m._repr_html_()
-    company = Company.objects.get(user=request.user)
-    company_name  = company.company
+    try:
+      company = Company.objects.get(user=request.user)
+    except Company.DoesNotExist:
+      company = 'Company'
+    if company == 'Company':
+      company_name = 'Company'
+    else:      
+      company_name  = company.company
     context = {
             'm':m,
             'company_name': company_name
@@ -598,8 +698,8 @@ def map_change(request):
          api_field_level_data = field_level_api(headers,selected_field_level_val,'06db5883-48bd-4350-93e7-0e0ae69fe94c','6f32f9ce-5266-4d68-b6f1-b314e31a071f','20221224')
     else:
            api_field_level_data = field_level_api(headers,selected_field_level_val,'06db5883-48bd-4350-93e7-0e0ae69fe94c','6f32f9ce-5266-4d68-b6f1-b314e31a071f','20221224')
-    if selected_pixel_level_val == False or selected_pixel_level_val == 'none':
-     for i in list_result[0]['fields']['features']:  
+   
+    for i in list_result[0]['fields']['features']:  
          fields_geojson = list_result[0]['fields']['features'][count]['geometry']
          field_uuid = list_result[0]['fields']['features'][count]['properties']['uuid'] 
          style_function =  {
@@ -632,51 +732,64 @@ def map_change(request):
                 'fillOpacity': 0
              }).add_to(m)
          m.fit_bounds(m.get_bounds(), padding=(10, 10))
-     if selected_field_level_val != False:
+    if selected_field_level_val != False:
         if selected_field_level_val != 'none' and selected_order_val != 'none' and selected_date != 'none':
-            m = set_range_legend(m,selected_field_level_val,selected_order_val,selected_date)
+            m = set_range_legend(m,selected_field_level_val,selected_order_val,selected_date,False)
         else:
           if selected_order_val == 'none' and selected_date == 'none':
-           m = set_range_legend(m,selected_field_level_val,'6f32f9ce-5266-4d68-b6f1-b314e31a071f','20221224')
+           m = set_range_legend(m,selected_field_level_val,'6f32f9ce-5266-4d68-b6f1-b314e31a071f','20221224',False)
           elif selected_order_val!='none' and selected_date == 'none':
-             m = set_range_legend(m,selected_field_level_val,selected_order_val,'20221224')
+             m = set_range_legend(m,selected_field_level_val,selected_order_val,'20221224',False)
           elif selected_order_val == 'none' and selected_date != 'none':
-            m = set_range_legend(m,selected_field_level_val,'6f32f9ce-5266-4d68-b6f1-b314e31a071f',selected_date)
+            m = set_range_legend(m,selected_field_level_val,'6f32f9ce-5266-4d68-b6f1-b314e31a071f',selected_date,False)
           else:
-             m = set_range_legend(m,selected_field_level_val,selected_order_val,selected_date)
+             m = set_range_legend(m,selected_field_level_val,selected_order_val,selected_date,False)
 
-    else:
-       m = get_pixel_data_from_tif()
-  
+    if selected_field_level_val == 'none': 
+      m = get_pixel_data_from_tif(selected_order_val,selected_date,selected_pixel_level_val,list_result)
+      m = set_range_legend(m,False,selected_order_val,selected_date,selected_pixel_level_val)
+
     m = m._repr_html_()
        
 
     return HttpResponse(m)
 
 def pixel_map(request):
+    selected_field_level_val = request.POST.get('selected_field_level',False)
     selected_pixel_level_val = request.POST.get('pixel_level_ddl',False)
     selected_order_val = request.POST.get('selected_order',False)
     selected_date = request.POST.get('selected_date',False)
     token = get_oauth2_token()
     headers = {"accept":"application/json","authorization":"Bearer "+token+""}
     if selected_order_val == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
-     url_company_orders = "https://api.irriwatch.com/api/v1/company/06db5883-48bd-4350-93e7-0e0ae69fe94c/order"
+        url_company_orders = "https://api.irriwatch.com/api/v1/company/06db5883-48bd-4350-93e7-0e0ae69fe94c/order"
     elif selected_order_val == '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f':
-      url_company_orders = "https://api.irriwatch.com/api/v1/company/ac082ccd-4605-4a51-b272-fc4856cade6c/order"  
+        url_company_orders = "https://api.irriwatch.com/api/v1/company/ac082ccd-4605-4a51-b272-fc4856cade6c/order"  
+    elif selected_order_val == "6809fe46-5bfc-4c5c-8e90-b267c705be2e":
+        url_company_orders = "https://api.irriwatch.com/api/v1/company/ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28/order"
     else:
-      url_company_orders = "https://api.irriwatch.com/api/v1/company/06db5883-48bd-4350-93e7-0e0ae69fe94c/order"  
+        url_company_orders = "https://api.irriwatch.com/api/v1/company/06db5883-48bd-4350-93e7-0e0ae69fe94c/order"  
     response_orders = requests.get(url=url_company_orders,headers=headers)
     list_result_uuids = json.loads(response_orders.content)
     list_result = list_result_uuids
     
-    m = get_pixel_data_from_tif(list_result)
+    if selected_field_level_val == 'none' and selected_pixel_level_val == 'none':
+        count = 0
+        for i in list_result[0]['fields']['features']:
+          fields_geojson = list_result[0]['fields']['features'][count]['geometry']
+          folium.GeoJson(fields_geojson,style_function=lambda x:{'fillOpacity': 0}).add_to(map)
+          count += 1
+    if selected_field_level_val == False or selected_field_level_val == 'none':
+      m = get_pixel_data_from_tif(selected_order_val,selected_date,selected_pixel_level_val,list_result)
+      m = set_range_legend(m,False,selected_order_val,selected_date,selected_pixel_level_val)
+
     m = m._repr_html_()
        
     return HttpResponse(m)
     
   
 
-def set_range_legend(m,field_level,order,date):
+def set_range_legend(m,field_level,order,date,pixel_level):
     if field_level:
         if field_level =='vegetation_cover':
             if order == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
@@ -753,9 +866,152 @@ def set_range_legend(m,field_level,order,date):
                              colors = ['#800000'],
                              labels = ['3.10'])
                  return m
+        elif field_level == 'irrigation_amount_cumulative':
+             if order == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
+                if date == '20221223' or date == '20221224':
+                    m = add_categorical_legend(m, 'Field: Applied Water Cumulative (mm)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['71.06','71.60','72.14','72.69','73.23','73.77'])
+                    return m 
+                else:
+                      m = add_categorical_legend(m, 'Field: Applied Water Cumulative (mm)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['77.96','78.52','79.08','79.63','80.19','80.75'])
+                      return m 
+             elif order == '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f':
+                if date == '20221223':
+                     m = add_categorical_legend(m, 'Field: Applied Water Cumulative (mm)',
+                             colors = ['#800000'],
+                             labels = ['112.46'])
+                     return m 
+                elif date == '20221224':
+                      m = add_categorical_legend(m, 'Field: Applied Water Cumulative (mm)',
+                             colors = ['#800000'],
+                             labels = ['113.35'])
+                      return m 
+                else:
+                   m = add_categorical_legend(m, 'Field: Applied Water Cumulative (mm)',
+                             colors = ['#800000'],
+                             labels = ['117.35'])
+                   return m 
+             else:
+               if date == '20221223':
+                   m = add_categorical_legend(m, 'Field: Applied Water Cumulative (mm)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['64.82','65.96','67.10','68.23','69.37','70.51'])
+                   return m 
+               elif date == '20221224':
+                    m = add_categorical_legend(m, 'Field: Applied Water Cumulative (mm)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['65.82','67.24','68.66','70.09','71.51','72.93'])
+                    return m 
+               else:
+                  m = add_categorical_legend(m, 'Field: Applied Water Cumulative (mm)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['76.87','78.34','79.81','81.27','82.74','84.21'])
+                  return m 
         else:
             return m
-            
+    if pixel_level:
+      if pixel_level == 'moisture_status': 
+        if order == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
+             m = add_categorical_legend(m, 'Pixel: Moisture status',
+                             colors = ['#d22e05','#f5ab21','#208528','#30129f','#c5b221'],
+                             labels = ['Dry','Stressed','Adequate','Wet','Sparse vegetation'])
+             return m 
+        elif order == '6809fe46-5bfc-4c5c-8e90-b267c705be2e':
+           m = add_categorical_legend(m, 'Pixel: Moisture status',
+                             colors = ['#d22e05','#f5ab21','#208528','#30129f','#c5b221'],
+                             labels = ['Dry','Stressed','Adequate','Wet','Sparse vegetation'])
+           return m 
+        else:
+           m = add_categorical_legend(m, 'Pixel: Moisture status',
+                             colors = ['#d22e05','#f5ab21','#208528','#30129f','#c5b221'],
+                             labels = ['Dry','Stressed','Adequate','Wet','Sparse vegetation'])
+           return m 
+      elif pixel_level == 'vegetation_cover': 
+        if order == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
+          if date == '20221223' or date == '20221224':
+             m = add_categorical_legend(m, 'Pixel: Vegetation Cover (%)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['34.70','47.56','60.42','73.28','86.14','99.00'])
+             return m 
+          else:
+            m = add_categorical_legend(m, 'Pixel: Vegetation Cover (%)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['45.30','56.04','66.78','77.52','88.26','99.00'])
+            return m 
+        elif order == '6809fe46-5bfc-4c5c-8e90-b267c705be2e':
+             m = add_categorical_legend(m, 'Pixel: Vegetation Cover (%)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['32.90','45.72','58.54','71.36','84.18','97.00'])
+             return m 
+        else:
+          if date == '20221223':
+             m = add_categorical_legend(m, 'Pixel: Vegetation Cover (%)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['16.20','21.74','27.28','32.82','38.36','43.90'])
+             return m 
+          elif date == '20221224':
+              m = add_categorical_legend(m, 'Pixel: Vegetation Cover (%)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['12.30','20.06','27.82','35.58','43.34','51.10'])
+              return m 
+          else:
+             m = add_categorical_legend(m, 'Pixel: Vegetation Cover (%)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['12.30','20.06','27.82','35.58','43.34','51.10'])
+             return m   
+      else:
+        if order == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
+          if date == '20221223':
+             m = add_categorical_legend(m, 'Pixel: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['0.40','0.60','0.80','1.00','1.20','1.40'])
+             return m  
+          elif date == '20221224':
+             m = add_categorical_legend(m, 'Pixel: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['0.50','0.74','0.98','1.22','1.46','1.70'])
+             return m  
+          else:
+             m = add_categorical_legend(m, 'Pixel: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['0.60','0.86','1.12','1.38','1.64','1.90'])
+             return m  
+        elif order == '6809fe46-5bfc-4c5c-8e90-b267c705be2e':
+          if date == '20221223':
+            m = add_categorical_legend(m, 'Pixel: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['1.80','2.28','2.76','3.24','3.72','4.20'])
+            return m  
+          elif date == '20221224':
+             m = add_categorical_legend(m, 'Pixel: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['2.00','2.52','3.04','3.56','4.08','4.60'])
+             return m 
+          else:
+              m = add_categorical_legend(m, 'Pixel: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['2.20','2.64','3.08','3.52','3.96','4.40'])
+              return m 
+        else:
+          if date == '20221223':
+             m = add_categorical_legend(m, 'Pixel: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['1.80','2.34','2.88','3.42','3.96','4.50'])
+             return m 
+          elif date == '20221224':
+             m = add_categorical_legend(m, 'Pixel: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['1.00','1.92','2.84','3.76','4.68','5.60'])
+             return m
+          else:
+             m = add_categorical_legend(m, 'Pixel: Actual Evapotranspiration (mm/d)',
+                             colors = ['#800000','#FFA500','#FFE5B4','#E2E6A9','#B4D9EC','#9D5BB5'],
+                             labels = ['1.40','2.38','3.36','4.34','5.32','6.30'])
+             return m
+
 
 def change_field_level_color(field_level,field_uuid,api_field_level_data,selected_order_value,date):
     if field_level:
@@ -936,6 +1192,69 @@ def change_field_level_color(field_level,field_uuid,api_field_level_data,selecte
                "fillColor": "#800000",
                'fillOpacity': 3
               } 
+       elif field_level == 'irrigation_amount_cumulative':
+          if selected_order_value == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
+            if date == '20221223' or date == '20221224':
+              if value_data == 71.06:
+                 style_function =  {
+                       "fillColor": "#800000",
+                        'fillOpacity': 3
+                     } 
+              else:
+                 style_function =  {
+                       "fillColor": "#9D5BB5",
+                        'fillOpacity': 3
+                     } 
+            else:
+              if value_data == 77.96:
+                style_function =  {
+                       "fillColor": "#800000",
+                        'fillOpacity': 3
+                     } 
+              else:
+                 style_function =  {
+                       "fillColor": "#9D5BB5",
+                        'fillOpacity': 3
+                     } 
+          elif selected_order_value == '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f':
+                  style_function =  {
+                        "fillColor": "#800000",
+                         'fillOpacity': 3
+                    }
+          else:
+            if date == '20221223':
+              if value_data == 64.82:
+                 style_function =  {
+                        "fillColor": "#800000",
+                         'fillOpacity': 3
+                    }
+              else:
+                 style_function =  {
+                       "fillColor": "#9D5BB5",
+                        'fillOpacity': 3
+                     } 
+            elif date == '20221224':
+              if value_data == 65.82:
+                 style_function =  {
+                        "fillColor": "#800000",
+                         'fillOpacity': 3
+                    }
+              else:
+                 style_function =  {
+                       "fillColor": "#9D5BB5",
+                        'fillOpacity': 3
+                     } 
+            else:
+              if value_data == 76.87:
+                style_function =  {
+                        "fillColor": "#800000",
+                         'fillOpacity': 3
+                    }
+              else:
+                 style_function =  {
+                       "fillColor": "#9D5BB5",
+                        'fillOpacity': 3
+                     } 
        else:
             style_function =  {
              "fillColor": "#D3D3D3",

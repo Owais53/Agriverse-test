@@ -90,6 +90,7 @@
         <option value="none">None</option>
         <option value="vegetation_cover">Vegetation Cover (%)</option>
         <option value="actual_evapotranspiration">Actual Evapotranspiration (mm/d)</option>
+        <option value="irrigation_amount_cumulative">Applied Water Cumulative (mm)</option>
       </select>
     </div>
     <br/>
@@ -99,6 +100,8 @@
       <select id="pixel_level_ddl" name="pixel_level_ddl" onchange="map_pixel_update()">
         <option value="none">None</option>
         <option value="moisture_status">Moisture Status (-)</option>
+        <option value="vegetation_cover">Vegetation cover (%)</option>
+        <option value="actual_evapotranspiration">Actual Evapotranspiration (mm/d)</option>
       </select>
     </div>
   </form>
@@ -155,7 +158,7 @@
       $.ajax({
         type: 'post',
         url: "{% url 'map_pixel' %}",
-        data:{'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        data:{'selected_order':$("#orders_ddl").val(),'selected_date':$("#date_ddl").val(),'selected_field_level':$("#field_level_ddl").val(),'pixel_level_ddl':$("#pixel_level_ddl").val(),'csrfmiddlewaretoken': '{{ csrf_token }}'},
         success: function(data) {  
            const html = $.parseHTML(data);
            $("#mapload").empty();
