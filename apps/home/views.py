@@ -746,8 +746,9 @@ def map_change(request):
              m = set_range_legend(m,selected_field_level_val,selected_order_val,selected_date,False)
 
     if selected_field_level_val == 'none': 
-      m = get_pixel_data_from_tif(selected_order_val,selected_date,selected_pixel_level_val,list_result)
-      m = set_range_legend(m,False,selected_order_val,selected_date,selected_pixel_level_val)
+      if selected_pixel_level_val != 'none':
+        m = get_pixel_data_from_tif(selected_order_val,selected_date,selected_pixel_level_val,list_result)
+        m = set_range_legend(m,False,selected_order_val,selected_date,selected_pixel_level_val)
 
     m = m._repr_html_()
        
@@ -780,8 +781,9 @@ def pixel_map(request):
           folium.GeoJson(fields_geojson,style_function=lambda x:{'fillOpacity': 0}).add_to(map)
           count += 1
     if selected_field_level_val == False or selected_field_level_val == 'none':
-      m = get_pixel_data_from_tif(selected_order_val,selected_date,selected_pixel_level_val,list_result)
-      m = set_range_legend(m,False,selected_order_val,selected_date,selected_pixel_level_val)
+      if selected_pixel_level_val != 'none':
+        m = get_pixel_data_from_tif(selected_order_val,selected_date,selected_pixel_level_val,list_result)
+        m = set_range_legend(m,False,selected_order_val,selected_date,selected_pixel_level_val)
 
     m = m._repr_html_()
        
@@ -912,7 +914,7 @@ def set_range_legend(m,field_level,order,date,pixel_level):
                   return m 
         else:
             return m
-    if pixel_level:
+    if pixel_level or pixel_level != 'none':
       if pixel_level == 'moisture_status': 
         if order == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
              m = add_categorical_legend(m, 'Pixel: Moisture status',
