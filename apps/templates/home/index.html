@@ -3,57 +3,184 @@
 {% block title %} Dashboard {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<style>
+.davidboxshadows {
+  box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.2);
+}
+</style>
+
+<style>
+  
+  .form-inline {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+  }
+  
+  /* Add some margins for each label */
+  .form-inline label {
+    margin: 5px 10px 5px 0;
+  }
+  
+  /* Style the input fields */
+  .form-inline select {
+    vertical-align: middle;
+    margin: 5px 10px 5px 0;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+  }
+  
+  /* Style the submit button */
+  .form-inline button {
+    padding: 10px 20px;
+    background-color: dodgerblue;
+    border: 1px solid #ddd;
+    color: white;
+  }
+  
+  .form-inline button:hover {
+    background-color: royalblue;
+  }
+  .dataTables_Filter{
+        float: right;
+        margin-left: 10px;
+    }
+  /* Add responsiveness - display the form controls vertically instead of horizontally on screens that are less than 800px wide */
+  @media (max-width: 800px) {
+    .form-inline input {
+      margin: 10px 0;
+    }
+  
+    .form-inline {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+  </style>
+{% endblock stylesheets %}
 
 {% block content %}
 
     <div class="row">
-
+      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
+        <div class="davidboxshadows">
+          <div class="card">
+            <div class="card-body bg-primary text-white text-center">
+              <h2 id="TotalNetworks">3</h2>
+              <h2>Companies</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
+        <div class="davidboxshadows">
+          <div class="card">
+            <div class="card-body bg-success text-white text-center">
+              <h2 id="TotalUsers">{{user_count}}</h2>
+              <h2>Users</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
+        <div class="davidboxshadows">
+          <div class="card">
+            <div class="card-body bg-primary text-white text-center">
+              <h2 id="TotalFields">5</h2>
+              <h2>Fields</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
+        <div class="davidboxshadows" >
+          <div class="card">
+            <div class="card-body bg-warning text-white text-center">
+              <h2 id="TotalOrders">3</h2>
+              <h2>Orders</h2>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="col-12">
         <div class="card card-chart">
           <div class="card-header ">
             <div class="row">
-              <div style="margin-right:40px;">
-                <label for="orders">Order No:</label>
-                <select name="orders" id="orders" class="form-control">
-                  
-               </select>
-              </div>
-              
               <div class="col-sm-6 text-left">
                 <h5 class="card-category">Farms</h5>
                 <h2 class="card-title">Performance</h2>
               </div>
               <div class="col-sm-6">
                 <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
-                  <label class="btn btn-sm btn-primary btn-simple active" id="0">
+                  <label class="btn btn-sm btn-primary btn-simple active radio_wrap" id="radio_wrap" data-radio="radio_1">
                     <input type="radio" name="options" checked>
-                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Virtual Soil Moisture Probe</span>
+                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Crops Production per fields</span>
                     <span class="d-block d-sm-none">
                       <i class="tim-icons icon-single-02"></i>
                     </span>
                   </label>
-                  <label class="btn btn-sm btn-primary btn-simple" id="1">
+                  <label class="btn btn-sm btn-primary btn-simple radio_wrap" id="radio_wrap" data-radio="radio_2">
                     <input type="radio" class="d-none d-sm-none" name="options">
-                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Irrigation Planner</span>
+                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Soil Water Potential Root Zone</span>
                     <span class="d-block d-sm-none">
-                      <i class="tim-icons icon-gift-2"></i> 
+                      <i class="tim-icons icon-gift-2"></i>
                     </span>
                   </label>
-                  <label class="btn btn-sm btn-primary btn-simple" id="2">
+                  <label class="btn btn-sm btn-primary btn-simple radio_wrap" id="radio_wrap" data-radio="radio_3">
                     <input type="radio" class="d-none" name="options">
-                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Leaf Nitrogen</span>
+                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block"></span>
                     <span class="d-block d-sm-none">
                       <i class="tim-icons icon-tap-02"></i>
                     </span>
                   </label>
                 </div>
               </div>
+              <div style="margin-right:40px;" class="form-inline">
+                <label for="dates">Select Date:</label>
+                <select name="dates" id="dates" onchange="change_graph()"> 
+                  <option value="20221223">23-12-2022</option>
+                  <option value="20221224" selected>24-12-2022</option>
+                  <option value="20221225">25-12-2022</option>    
+               </select>
+               <label for="orders">Select Order:</label>
+                <select name="orders" id="orders" onchange="change_graph()"> 
+                  <option value="all" selected>All</option>
+                  <option value="6f32f9ce-5266-4d68-b6f1-b314e31a071f">3103</option>
+                  <option value="30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f">3099</option>
+                  <option value="6809fe46-5bfc-4c5c-8e90-b267c705be2e">3097</option> 
+               </select>
+              </div>
+              
+              
             </div>
           </div>
+
           <div class="card-body">
             <div class="chart-area">
-              {{line_graph|safe}}
+               
+              <div id="content">
+                <div class="radio_content radio_1">  
+                <div id="graph"></div>
+                <div id="graphload">
+                  {{bar|safe}}
+                </div>
+               
+               </div>
+               <div class="radio_content radio_2">  
+                <div id="areagraph"></div>
+                <div id="areagraphload">
+                  {{line|safe}}
+                </div>
+              </div>
+              <div class="radio_content radio_3">  
+                <div id="graph"></div>
+                <div id="graphload">
+                  {{bar|safe}}
+                </div>
+              </div>
+              </div>
             </div>
           </div>
         </div>
@@ -61,24 +188,27 @@
 
     </div>
     <div class="row">
-      <div class="col-lg-4">
+      <div class="col-lg-6">
         <div class="card card-chart">
           <div class="card-header">
-            <h5 class="card-category">Soil Mosture Root Zone</h5>
-            <h3 class="card-title"><i class="tim-icons icon-bell-55 text-primary"></i> 763,215</h3>
+            <h5 class="card-category"></h5>
+            <h3 class="card-title"></h3>
           </div>
           <div class="card-body">
             <div class="chart-area">
-              {{target_plot|safe}}
+              <div id="pie_graph"></div>
+              <div id="pie_graphload">
+                {{pie_plot|safe}}
+              </div>   
             </div>
           </div>
         </div>
       </div>
-      <div class="col-lg-4">
+      <div class="col-lg-6">
         <div class="card card-chart">
           <div class="card-header">
-            <h5 class="card-category">Daily Sales</h5>
-            <h3 class="card-title"><i class="tim-icons icon-delivery-fast text-info"></i> 3,500€</h3>
+            <h5 class="card-category"></h5>
+            <h3 class="card-title"></h3>
           </div>
           <div class="card-body">
             <div class="chart-area">
@@ -87,296 +217,45 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-4">
-        <div class="card card-chart">
-          <div class="card-header">
-            <h5 class="card-category">Completed Tasks</h5>
-            <h3 class="card-title"><i class="tim-icons icon-send text-success"></i> 12,100K</h3>
-          </div>
-          <div class="card-body">
-            <div class="chart-area">
-              <canvas id="chartLineGreen"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
+     
     </div>
     <div class="row">
-      <div class="col-lg-6 col-md-12">
-        <div class="card card-tasks">
-          <div class="card-header ">
-            <h6 class="title d-inline">Tasks(5)</h6>
-            <p class="card-category d-inline">today</p>
-            <div class="dropdown">
-              <button type="button" class="btn btn-link dropdown-toggle btn-icon" data-toggle="dropdown">
-                <i class="tim-icons icon-settings-gear-63"></i>
-              </button>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="#pablo">Action</a>
-                <a class="dropdown-item" href="#pablo">Another action</a>
-                <a class="dropdown-item" href="#pablo">Something else</a>
-              </div>
-            </div>
-          </div>
-          <div class="card-body ">
-            <div class="table-full-width table-responsive">
-              <table class="table">
-                <tbody>
-                  <tr>
-                    <td>
-                      <div class="form-check">
-                        <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" value="">
-                          <span class="form-check-sign">
-                            <span class="check"></span>
-                          </span>
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                      <p class="title">Update the Documentation</p>
-                      <p class="text-muted">Dwuamish Head, Seattle, WA 8:47 AM</p>
-                    </td>
-                    <td class="td-actions text-right">
-                      <button type="button" rel="tooltip" title="" class="btn btn-link" data-original-title="Edit Task">
-                        <i class="tim-icons icon-pencil"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="form-check">
-                        <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" value="" checked="">
-                          <span class="form-check-sign">
-                            <span class="check"></span>
-                          </span>
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                      <p class="title">GDPR Compliance</p>
-                      <p class="text-muted">The GDPR is a regulation that requires businesses to protect the personal data and privacy of Europe citizens for transactions that occur within EU member states.</p>
-                    </td>
-                    <td class="td-actions text-right">
-                      <button type="button" rel="tooltip" title="" class="btn btn-link" data-original-title="Edit Task">
-                        <i class="tim-icons icon-pencil"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="form-check">
-                        <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" value="">
-                          <span class="form-check-sign">
-                            <span class="check"></span>
-                          </span>
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                      <p class="title">Solve the issues</p>
-                      <p class="text-muted">Fifty percent of all respondents said they would be more likely to shop at a company </p>
-                    </td>
-                    <td class="td-actions text-right">
-                      <button type="button" rel="tooltip" title="" class="btn btn-link" data-original-title="Edit Task">
-                        <i class="tim-icons icon-pencil"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="form-check">
-                        <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" value="">
-                          <span class="form-check-sign">
-                            <span class="check"></span>
-                          </span>
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                      <p class="title">Release v2.0.0</p>
-                      <p class="text-muted">Ra Ave SW, Seattle, WA 98116, SUA 11:19 AM</p>
-                    </td>
-                    <td class="td-actions text-right">
-                      <button type="button" rel="tooltip" title="" class="btn btn-link" data-original-title="Edit Task">
-                        <i class="tim-icons icon-pencil"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="form-check">
-                        <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" value="">
-                          <span class="form-check-sign">
-                            <span class="check"></span>
-                          </span>
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                      <p class="title">Export the processed files</p>
-                      <p class="text-muted">The report also shows that consumers will not easily forgive a company once a breach exposing their personal data occurs. </p>
-                    </td>
-                    <td class="td-actions text-right">
-                      <button type="button" rel="tooltip" title="" class="btn btn-link" data-original-title="Edit Task">
-                        <i class="tim-icons icon-pencil"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="form-check">
-                        <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" value="">
-                          <span class="form-check-sign">
-                            <span class="check"></span>
-                          </span>
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                      <p class="title">Arival at export process</p>
-                      <p class="text-muted">Capitol Hill, Seattle, WA 12:34 AM</p>
-                    </td>
-                    <td class="td-actions text-right">
-                      <button type="button" rel="tooltip" title="" class="btn btn-link" data-original-title="Edit Task">
-                        <i class="tim-icons icon-pencil"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-6 col-md-12">
+      <div class="col-lg-12 col-md-12">
         <div class="card ">
           <div class="card-header">
-            <h4 class="card-title"> Simple Table</h4>
+            <h4 class="card-title">Field Level Data</h4>
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table tablesorter " id="">
+              <table class="table tablesorter" id="field_datatable">
                 <thead class=" text-primary">
+                 
                   <tr>
                     <th>
-                      Name
+                     Field Name
                     </th>
                     <th>
-                      Country
+                      Date
                     </th>
                     <th>
-                      City
+                      Vegetation Cover
                     </th>
-                    <th class="text-center">
-                      Salary
+                    <th >
+                      Soil Temperature 
                     </th>
                   </tr>
+                  
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      Dakota Rice
-                    </td>
-                    <td>
-                      Niger
-                    </td>
-                    <td>
-                      Oud-Turnhout
-                    </td>
-                    <td class="text-center">
-                      $36,738
-                    </td>
+                <tbody id="body_data">
+                  {% for values in field_data %}
+                  <tr>       
+                    <td>{{values.0}}</td> 
+                    <td>{{values.1}}</td>
+                    <td>{{values.2}}</td> 
+                    <td>{{values.3}}</td>          
                   </tr>
-                  <tr>
-                    <td>
-                      Minerva Hooper
-                    </td>
-                    <td>
-                      Curaçao
-                    </td>
-                    <td>
-                      Sinaai-Waas
-                    </td>
-                    <td class="text-center">
-                      $23,789
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      Sage Rodriguez
-                    </td>
-                    <td>
-                      Netherlands
-                    </td>
-                    <td>
-                      Baileux
-                    </td>
-                    <td class="text-center">
-                      $56,142
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      Philip Chaney
-                    </td>
-                    <td>
-                      Korea, South
-                    </td>
-                    <td>
-                      Overland Park
-                    </td>
-                    <td class="text-center">
-                      $38,735
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      Doris Greene
-                    </td>
-                    <td>
-                      Malawi
-                    </td>
-                    <td>
-                      Feldkirchen in Kärnten
-                    </td>
-                    <td class="text-center">
-                      $63,542
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      Mason Porter
-                    </td>
-                    <td>
-                      Chile
-                    </td>
-                    <td>
-                      Gloucester
-                    </td>
-                    <td class="text-center">
-                      $78,615
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      Jon Porter
-                    </td>
-                    <td>
-                      Portugal
-                    </td>
-                    <td>
-                      Gloucester
-                    </td>
-                    <td class="text-center">
-                      $98,615
-                    </td>
-                  </tr>
+                  
+                  {% endfor %} 
                 </tbody>
               </table>
             </div>
@@ -389,16 +268,53 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script src="//cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
   <script>
     $(document).ready(function() {
       // Javascript method's body can be found in assets/js/demos.js
-      demo.initDashboardPageCharts();
-
+      //demo.initDashboardPageCharts();
+       $('#field_datatable').DataTable({
+        dom: '<lf<t>ip>',
+       });
+       $("#content .radio_content").hide()
+       $("#content .radio_content:first-child").show()
+       $(".radio_wrap").click(function(){
+          var current_radio = $(this).attr("data-radio");
+          $("#content .radio_content").hide()
+          $("." + current_radio).show()
+       });
     });
     function SettingsMenu() {
        document.getElementsByClassName("services-cont")[0].classList.toggle("showS");
         }
+    function change_graph(){
+      $.ajax({
+        type: 'post',
+        url: "{% url 'graph_change' %}",
+        data:{ 'dates':$("#dates").val(),'orders':$("#orders").val(),'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        success: function(data) {  
+           $("#graphload").empty();
+           $("#graph").empty();
+           $("#pie_graph").empty();
+           $("#pie_graphload").empty();
+           $("#areagraph").empty();
+           $("#areagraphload").empty();
+           $("#body_data").empty();
+           $("#graph").append(data.bar_graph);
+           $("#pie_graph").append(data.pie_graph);
+           $("#areagraph").append(data.area_graph);
+           data.field_data.forEach(function (item, index){
+            console.log(item,index);
+            $("#body_data").append('<tr><td>'+item[0]+'</td><td>'+item[1]+'</td><td>'+item[2]+'</td><td>'+item[3]+'</td></tr>');
+            });
+           
+        }
+       });
+    }
   </script>
 
 {% endblock javascripts %}

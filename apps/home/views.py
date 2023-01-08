@@ -45,6 +45,7 @@ from apps.authentication.models import Company
 
 @login_required(login_url="/login/")
 def index(request):
+    selected_date = request.POST.get('dates',False)
     context = {'segment': 'index'}
     auth_url = "https://portal.irriwatch.com/oauth/v2/token"
     headers_auth = {
@@ -64,46 +65,79 @@ def index(request):
     field_4 = []
     field_5 = []
     date_list = []
+    field_data = []
     colors = {
     'background': '#111111',
     'text': '#7FDBFF'
     }
-    url_field_data ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',order_uuid = '6f32f9ce-5266-4d68-b6f1-b314e31a071f',date = '20221123')
-    response_field_levels = requests.get(url=url_field_data,headers=headers)
-    field_level_res = eval(response_field_levels.content)
-
-    for i in field_level_res:
-        field_uuid = i     
-        field_level_vals = field_level_res[field_uuid]
-        field_list.append(field_level_vals['soil_moisture_root_zone_no_irri_fcdp2'])
-        field_efficiency_avg_10d_list.append(field_level_vals['soil_moisture_root_zone'])
-        field_3.append(field_level_vals['critical_soil_moisture_root_zone'])
-        field_4.append(field_level_vals['theta_fc_sub'])
-        date_list.append(field_level_vals['date'])
+    
+    if selected_date != False:
+         url_field_data_3103 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',order_uuid = '6f32f9ce-5266-4d68-b6f1-b314e31a071f',date = selected_date)
+         url_field_data_3099 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ac082ccd-4605-4a51-b272-fc4856cade6c',order_uuid = '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f',date = selected_date)
+         url_field_data_3097 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',order_uuid = '6809fe46-5bfc-4c5c-8e90-b267c705be2e',date = selected_date)
+    else:
+         url_field_data_3103 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',order_uuid = '6f32f9ce-5266-4d68-b6f1-b314e31a071f',date = '20221224')
+         url_field_data_3099 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ac082ccd-4605-4a51-b272-fc4856cade6c',order_uuid = '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f',date = '20221224')
+         url_field_data_3097 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',order_uuid = '6809fe46-5bfc-4c5c-8e90-b267c705be2e',date = '20221224')
+  
+    response_field_3103 = requests.get(url=url_field_data_3103,headers=headers)
+    response_field_3099 = requests.get(url=url_field_data_3099,headers=headers)
+    response_field_3097 = requests.get(url=url_field_data_3097,headers=headers)
+    field_3103 = response_field_3103.json()
+    field_3099 = response_field_3099.json()
+    field_3097 = response_field_3097.json()
+    orders_list = ['3103','3103','3099','3097','3097']
+    field_actual_crop_production_list = []
+    field_actual_evapotranspiration_list = []
+    field_soil_water_potential_root_zone_list = []
+    field_name_list = []
+    vegetation_cover_list = []
+    soil_temperature_list = []
+    date_list = []
+    for i in field_3103:
+      field_3103_vals = field_3103[i]
+      field_data.append([field_3103_vals['name'],field_3103_vals['date'],field_3103_vals['vegetation_cover'],field_3103_vals['soil_temperature']])
+      field_actual_crop_production_list.append(field_3103_vals['actual_crop_production'])
+      field_actual_evapotranspiration_list.append(field_3103_vals['actual_evapotranspiration'])
+      field_soil_water_potential_root_zone_list.append(field_3103_vals['soil_water_potential_root_zone'])
+      field_name_list.append(field_3103_vals['name'])
+      vegetation_cover_list.append(field_3103_vals['vegetation_cover'])
+      soil_temperature_list.append(field_3103_vals['soil_temperature'])
+      date_list.append(field_3103_vals['date'])
+    for i in field_3099:
+       field_3099_vals = field_3099[i]
+       field_data.append([field_3099_vals['name'],field_3099_vals['date'],field_3099_vals['vegetation_cover'],field_3099_vals['soil_temperature']])
+       field_actual_crop_production_list.append(field_3099_vals['actual_crop_production'])
+       field_actual_evapotranspiration_list.append(field_3099_vals['actual_evapotranspiration'])
+       field_soil_water_potential_root_zone_list.append(field_3099_vals['soil_water_potential_root_zone'])
+       field_name_list.append(field_3099_vals['name'])
+       vegetation_cover_list.append(field_3099_vals['vegetation_cover'])
+       soil_temperature_list.append(field_3099_vals['soil_temperature'])
+       date_list.append(field_3103_vals['date'])
+    for i in field_3097:
+       field_3097_vals = field_3097[i]
+       field_data.append([field_3097_vals['name'],field_3097_vals['date'],field_3097_vals['vegetation_cover'],field_3097_vals['soil_temperature']])
+       field_actual_crop_production_list.append(field_3097_vals['actual_crop_production'])
+       field_actual_evapotranspiration_list.append(field_3097_vals['actual_evapotranspiration'])
+       field_soil_water_potential_root_zone_list.append(field_3097_vals['soil_water_potential_root_zone'])
+       field_name_list.append(field_3097_vals['name'])
+       vegetation_cover_list.append(field_3097_vals['vegetation_cover'])
+       soil_temperature_list.append(field_3097_vals['soil_temperature'])
+       date_list.append(field_3103_vals['date'])
     df = pd.DataFrame({
-                "Soil_mosture_root_zone": field_efficiency_avg_10d_list,
-                "critical_soil_moisture_root_zone": field_3
+                "fields_name": field_name_list,
+                "actual_evapotranspiration": field_actual_evapotranspiration_list
             })
-    df1 = pd.DataFrame({
-                "Soil_mosture_root_zone": field_efficiency_avg_10d_list,
-                "critical_soil_moisture_root_zone": field_3,
-                "Date":date_list
-            }) # replace with your own data source
-    fig = px.pie(df, values='critical_soil_moisture_root_zone', names='Soil_mosture_root_zone', hole=.3,height=300)
+     # replace with your own data source
+    fig = px.pie(df, values='actual_evapotranspiration', names='fields_name', hole=.3,height=300)
     fig.update_layout(
+                title_text='Actual Evapotranspiration per fields',
                 plot_bgcolor=colors['background'],
                 paper_bgcolor=colors['background'],
                 font_color=colors['text']
                )
     
     plotly_plot_obj = plot({'data': fig}, output_type='div')
-    fig1 = px.line(df1, x='Date', y='critical_soil_moisture_root_zone')
-    fig1.add_scatter(x=df1['Date'], y=df1['Soil_mosture_root_zone'], mode='lines')
-    fig1.update_layout(
-                plot_bgcolor=colors['background'],
-                paper_bgcolor=colors['background'],
-                font_color=colors['text']
-               )
     fig2 = go.Figure(go.Surface(
                   contours = {
                     "x": {"show": True, "start": 1.5, "end": 2, "size": 0.04, "color":"black"},
@@ -128,19 +162,48 @@ def index(request):
                                
                 plot_bgcolor=colors['background'],
                 paper_bgcolor=colors['background'],
+                font_color=colors['text'],
+                height=300
+               )
+   
+    df3 = pd.DataFrame({'field':field_name_list,'orders':orders_list,'crop_production':field_actual_crop_production_list}) 
+    fig4 = px.bar(df3, x="field", y="crop_production", 
+                 color="orders", barmode="group")
+    fig4.update_layout(title_text='Crop Production per fields',width=1000,height=300,plot_bgcolor=colors['background'],
+                paper_bgcolor=colors['background'],
+                font_color=colors['text'])
+    chart = fig4.to_html()
+    data= {'Orders':orders_list,
+       'Field': field_name_list,
+     'Soil Water Potential Root Zone': field_soil_water_potential_root_zone_list      
+     }
+    df7 = pd.DataFrame(data)
+    #df7['dates'] =pd.to_datetime(df7['dates'])
+    freq='M'
+    #df7=df7[['dates', 'types']].groupby([pd.Grouper(key='dates', freq = freq)]).agg('count').reset_index()
+    #df7.loc['2022-12-23':'2022-12-25']
+    line_plot = px.area(df7, x='Field', y='Soil Water Potential Root Zone',color='Orders',pattern_shape="Orders", pattern_shape_sequence=[".", "x", "+"],height=300,width=1000)
+    line_plot.update_layout(
+                title_text='..',
+                plot_bgcolor=colors['background'],
+                paper_bgcolor=colors['background'],
                 font_color=colors['text']
                )
+    charts = plot({'data':fig4},output_type='div')
     line_plot_obj = plot({'data':fig2},output_type='div')
-    line_plot_obj1 = plot({'data':fig1},output_type='div')
+    #line_plot_obj1 = plot({'data':fig1},output_type='div')
+    line = plot({'data':line_plot},output_type='div')
+    user_count = 0
     try:
       company = Company.objects.get(user=request.user)
+      user_count = Company.objects.filter(user=request.user).count()
     except Company.DoesNotExist:
       company = 'Company'
     if company == 'Company':
       company_name = 'Company'
     else:      
       company_name  = company.company
-    context = {'target_plot': plotly_plot_obj,'line_plot':line_plot_obj,'line_graph':line_plot_obj1,'company_name':company_name}
+    context = {'pie_plot': plotly_plot_obj,'line_plot':line_plot_obj,'company_name':company_name,'user_count':user_count,'bar':charts,'line':line,'field_data':field_data}
     return render(request,'home/index.html',context=context)
     
 
@@ -169,6 +232,119 @@ def pages(request):
     except:
         html_template = loader.get_template('home/page-500.html')
         return HttpResponse(html_template.render(context, request))
+
+def change_graphs(request):
+    selected_date = request.POST.get('dates',False)
+    selected_orders = request.POST.get('orders',False)
+    token = get_oauth2_token()
+    headers = {"accept":"application/json","authorization":"Bearer "+token+""}
+    colors = {
+    'background': '#111111',
+    'text': '#7FDBFF'
+    }
+    if selected_date != False and selected_orders == 'all':
+         url_field_data_3103 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',order_uuid = '6f32f9ce-5266-4d68-b6f1-b314e31a071f',date = selected_date)
+         url_field_data_3099 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ac082ccd-4605-4a51-b272-fc4856cade6c',order_uuid = '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f',date = selected_date)
+         url_field_data_3097 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',order_uuid = '6809fe46-5bfc-4c5c-8e90-b267c705be2e',date = selected_date)
+    elif selected_orders == '6f32f9ce-5266-4d68-b6f1-b314e31a071f' and selected_date != False:
+        url_field_data_3103 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',order_uuid = '6f32f9ce-5266-4d68-b6f1-b314e31a071f',date = selected_date)
+    elif selected_orders == '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f' and selected_date != False:
+        url_field_data_3099 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ac082ccd-4605-4a51-b272-fc4856cade6c',order_uuid = '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f',date = selected_date)
+    elif selected_orders == '6809fe46-5bfc-4c5c-8e90-b267c705be2e' and selected_date != False:
+        url_field_data_3097 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',order_uuid = '6809fe46-5bfc-4c5c-8e90-b267c705be2e',date = selected_date)
+    else:
+         url_field_data_3103 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',order_uuid = '6f32f9ce-5266-4d68-b6f1-b314e31a071f',date = '20221224')
+         url_field_data_3099 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ac082ccd-4605-4a51-b272-fc4856cade6c',order_uuid = '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f',date = '20221224')
+         url_field_data_3097 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',order_uuid = '6809fe46-5bfc-4c5c-8e90-b267c705be2e',date = '20221224')
+    orders_list = ['3103','3103','3099','3097','3097']
+    field_actual_crop_production_list = []
+    field_actual_evapotranspiration_list = []
+    field_soil_water_potential_root_zone_list = []
+    field_name_list = []
+    field_data = []
+    field_3103 = False
+    field_3099 = False
+    field_3097 = False
+    if selected_orders == 'all':
+      orders_list = ['3103','3103','3099','3097','3097']
+      response_field_3103 = requests.get(url=url_field_data_3103,headers=headers)
+      response_field_3099 = requests.get(url=url_field_data_3099,headers=headers)
+      response_field_3097 = requests.get(url=url_field_data_3097,headers=headers)
+      field_3103 = response_field_3103.json()
+      field_3099 = response_field_3099.json()
+      field_3097 = response_field_3097.json()
+    elif selected_orders == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
+      orders_list = ['3103','3103']
+      response_field_3103 = requests.get(url=url_field_data_3103,headers=headers)
+      field_3103 = response_field_3103.json()
+    elif selected_orders == '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f':
+      orders_list = ['3099']
+      response_field_3099 = requests.get(url=url_field_data_3099,headers=headers)
+      field_3099 = response_field_3099.json()
+    elif selected_orders == '6809fe46-5bfc-4c5c-8e90-b267c705be2e':
+      orders_list = ['3097','3097']
+      response_field_3097 = requests.get(url=url_field_data_3097,headers=headers)
+      field_3097 = response_field_3097.json()
+    if field_3103 != False:
+      for i in field_3103:
+        field_3103_vals = field_3103[i]
+        field_data.append([field_3103_vals['name'],field_3103_vals['date'],field_3103_vals['vegetation_cover'],field_3103_vals['soil_temperature']])
+        field_actual_crop_production_list.append(field_3103_vals['actual_crop_production'])
+        field_actual_evapotranspiration_list.append(field_3103_vals['actual_evapotranspiration'])
+        field_soil_water_potential_root_zone_list.append(field_3103_vals['soil_water_potential_root_zone'])
+        field_name_list.append(field_3103_vals['name'])
+    if field_3099 != False:
+      for i in field_3099:
+       field_3099_vals = field_3099[i]
+       field_data.append([field_3099_vals['name'],field_3099_vals['date'],field_3099_vals['vegetation_cover'],field_3099_vals['soil_temperature']])
+       field_actual_crop_production_list.append(field_3099_vals['actual_crop_production'])
+       field_actual_evapotranspiration_list.append(field_3099_vals['actual_evapotranspiration'])
+      field_soil_water_potential_root_zone_list.append(field_3099_vals['soil_water_potential_root_zone'])
+      field_name_list.append(field_3099_vals['name'])
+    if field_3097 != False:
+      for i in field_3097:
+       field_3097_vals = field_3097[i]
+       field_data.append([field_3097_vals['name'],field_3097_vals['date'],field_3097_vals['vegetation_cover'],field_3097_vals['soil_temperature']])
+       field_actual_crop_production_list.append(field_3097_vals['actual_crop_production'])
+       field_actual_evapotranspiration_list.append(field_3097_vals['actual_evapotranspiration'])
+       field_soil_water_potential_root_zone_list.append(field_3097_vals['soil_water_potential_root_zone'])
+       field_name_list.append(field_3097_vals['name'])
+    date_list = ['2022-12-23','2022-12-24','2022-12-25']
+    df = pd.DataFrame({
+                "fields_name": field_name_list,
+                "actual_evapotranspiration": field_actual_evapotranspiration_list
+            })
+    fig = px.pie(df, values='actual_evapotranspiration', names='fields_name', hole=.3,height=300)
+    fig.update_layout(
+                title_text='Actual Evapotranspiration per fields',
+                plot_bgcolor=colors['background'],
+                paper_bgcolor=colors['background'],
+                font_color=colors['text']
+               )
+    
+    df3 = pd.DataFrame({'field':field_name_list,'orders':orders_list,'crop_production':field_actual_crop_production_list}) 
+    fig4 = px.bar(df3, x="field", y="crop_production", 
+                 color="orders", barmode="group")
+    fig4.update_layout(title_text='Crop Production per fields',width=1000,height=300,plot_bgcolor=colors['background'],
+                paper_bgcolor=colors['background'],
+                font_color=colors['text'])
+    data= {'Orders':orders_list,
+       'Field': field_name_list,
+     'Soil Water Potential Root Zone': field_soil_water_potential_root_zone_list      
+     }
+    df7 = pd.DataFrame(data)
+    line_plot = px.area(df7, x='Field', y='Soil Water Potential Root Zone',color='Orders',pattern_shape="Orders", pattern_shape_sequence=[".", "x", "+"],height=300,width=1000)
+    line_plot.update_layout(
+                title_text='Soil Water Potential Root Zone',
+                plot_bgcolor=colors['background'],
+                paper_bgcolor=colors['background'],
+                font_color=colors['text']
+               )
+    area_chart = plot({'data':line_plot},output_type='div')
+    charts = plot({'data':fig4},output_type='div')
+    pie_chart = plot({'data':fig},output_type='div')
+    context = {'bar_graph':charts,'pie_graph':pie_chart,'area_graph':area_chart,'field_data':field_data}
+    return HttpResponse(json.dumps(context),content_type='application/json')
 
 def add_categorical_legend(folium_map, title, colors, labels):
     color_by_label = dict(zip(labels, colors))

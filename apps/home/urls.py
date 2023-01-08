@@ -12,6 +12,7 @@ urlpatterns = [
 
     # The home page
     path('', views.index, name='home'),
+    path('graph_change/', views.change_graphs, name='graph_change'),
     path('map/',views.map,name='map'),
     path('map_change/',views.map_change,name='map_change'),
     path('pixel_map/',views.pixel_map,name='map_pixel'),
