@@ -37,7 +37,6 @@ import zipfile
 import io
 import numpy.ma as ma
 import os
-import ee
 from zipfile import ZipFile, is_zipfile
 from apps.authentication.models import Company
 
@@ -79,7 +78,7 @@ def index(request):
          url_field_data_3103 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',order_uuid = '6f32f9ce-5266-4d68-b6f1-b314e31a071f',date = '20221224')
          url_field_data_3099 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ac082ccd-4605-4a51-b272-fc4856cade6c',order_uuid = '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f',date = '20221224')
          url_field_data_3097 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',order_uuid = '6809fe46-5bfc-4c5c-8e90-b267c705be2e',date = '20221224')
-  
+        
     response_field_3103 = requests.get(url=url_field_data_3103,headers=headers)
     response_field_3099 = requests.get(url=url_field_data_3099,headers=headers)
     response_field_3097 = requests.get(url=url_field_data_3097,headers=headers)
@@ -113,7 +112,7 @@ def index(request):
        field_name_list.append(field_3099_vals['name'])
        vegetation_cover_list.append(field_3099_vals['vegetation_cover'])
        soil_temperature_list.append(field_3099_vals['soil_temperature'])
-       date_list.append(field_3103_vals['date'])
+       date_list.append(field_3099_vals['date'])
     for i in field_3097:
        field_3097_vals = field_3097[i]
        field_data.append([field_3097_vals['name'],field_3097_vals['date'],field_3097_vals['vegetation_cover'],field_3097_vals['soil_temperature']])
@@ -123,7 +122,7 @@ def index(request):
        field_name_list.append(field_3097_vals['name'])
        vegetation_cover_list.append(field_3097_vals['vegetation_cover'])
        soil_temperature_list.append(field_3097_vals['soil_temperature'])
-       date_list.append(field_3103_vals['date'])
+       date_list.append(field_3097_vals['date'])
     df = pd.DataFrame({
                 "fields_name": field_name_list,
                 "actual_evapotranspiration": field_actual_evapotranspiration_list
@@ -184,11 +183,27 @@ def index(request):
     #df7.loc['2022-12-23':'2022-12-25']
     line_plot = px.area(df7, x='Field', y='Soil Water Potential Root Zone',color='Orders',pattern_shape="Orders", pattern_shape_sequence=[".", "x", "+"],height=300,width=1000)
     line_plot.update_layout(
-                title_text='..',
+                title_text='Soil Water Potential Root Zone',
                 plot_bgcolor=colors['background'],
                 paper_bgcolor=colors['background'],
                 font_color=colors['text']
                )
+    data1=[soil_temperature_list]
+    fig9 = px.imshow(data1,
+                labels=dict(x="Fields", y="Date", color="Soil Temprature"),
+                x=field_name_list,
+                y=['2022-12-24']
+               )
+    fig9.update_xaxes(side="top")
+    fig9.update_layout(
+                title_text='Soil Temprature',
+                width=1000,
+                height=300,
+                plot_bgcolor=colors['background'],
+                paper_bgcolor=colors['background'],
+                font_color=colors['text']
+               )
+    chart1 = plot({'data':fig9},output_type='div')
     charts = plot({'data':fig4},output_type='div')
     line_plot_obj = plot({'data':fig2},output_type='div')
     #line_plot_obj1 = plot({'data':fig1},output_type='div')
@@ -203,7 +218,7 @@ def index(request):
       company_name = 'Company'
     else:      
       company_name  = company.company
-    context = {'pie_plot': plotly_plot_obj,'line_plot':line_plot_obj,'company_name':company_name,'user_count':user_count,'bar':charts,'line':line,'field_data':field_data}
+    context = {'pie_plot': plotly_plot_obj,'line_plot':line_plot_obj,'company_name':company_name,'user_count':user_count,'bar':charts,'line':line,'field_data':field_data,'box':chart1}
     return render(request,'home/index.html',context=context)
     
 
@@ -260,6 +275,7 @@ def change_graphs(request):
     field_actual_crop_production_list = []
     field_actual_evapotranspiration_list = []
     field_soil_water_potential_root_zone_list = []
+    soil_temprature_list = []
     field_name_list = []
     field_data = []
     field_3103 = False
@@ -288,6 +304,7 @@ def change_graphs(request):
     if field_3103 != False:
       for i in field_3103:
         field_3103_vals = field_3103[i]
+        soil_temprature_list.append(field_3103_vals['soil_temperature'])
         field_data.append([field_3103_vals['name'],field_3103_vals['date'],field_3103_vals['vegetation_cover'],field_3103_vals['soil_temperature']])
         field_actual_crop_production_list.append(field_3103_vals['actual_crop_production'])
         field_actual_evapotranspiration_list.append(field_3103_vals['actual_evapotranspiration'])
@@ -296,6 +313,7 @@ def change_graphs(request):
     if field_3099 != False:
       for i in field_3099:
        field_3099_vals = field_3099[i]
+       soil_temprature_list.append(field_3099_vals['soil_temperature'])
        field_data.append([field_3099_vals['name'],field_3099_vals['date'],field_3099_vals['vegetation_cover'],field_3099_vals['soil_temperature']])
        field_actual_crop_production_list.append(field_3099_vals['actual_crop_production'])
        field_actual_evapotranspiration_list.append(field_3099_vals['actual_evapotranspiration'])
@@ -304,6 +322,7 @@ def change_graphs(request):
     if field_3097 != False:
       for i in field_3097:
        field_3097_vals = field_3097[i]
+       soil_temprature_list.append(field_3097_vals['soil_temperature'])
        field_data.append([field_3097_vals['name'],field_3097_vals['date'],field_3097_vals['vegetation_cover'],field_3097_vals['soil_temperature']])
        field_actual_crop_production_list.append(field_3097_vals['actual_crop_production'])
        field_actual_evapotranspiration_list.append(field_3097_vals['actual_evapotranspiration'])
@@ -340,10 +359,39 @@ def change_graphs(request):
                 paper_bgcolor=colors['background'],
                 font_color=colors['text']
                )
+    data1=[soil_temprature_list]
+    if selected_date == '20221223':
+      fig9 = px.imshow(data1,
+                labels=dict(x="Fields", y="Date", color="Soil Temprature"),
+                x=field_name_list,
+                y=['2022-12-23']
+               )
+    elif selected_date == '20221224':
+       fig9 = px.imshow(data1,
+                labels=dict(x="Fields", y="Date", color="Soil Temprature"),
+                x=field_name_list,
+                y=['2022-12-24']
+               )
+    else:
+      fig9 = px.imshow(data1,
+                labels=dict(x="Fields", y="Date", color="Soil Temprature"),
+                x=field_name_list,
+                y=['2022-12-25']
+               )
+    fig9.update_xaxes(side="top")
+    fig9.update_layout(
+                title_text='Soil Temprature',
+                width=1000,
+                height=300,
+                plot_bgcolor=colors['background'],
+                paper_bgcolor=colors['background'],
+                font_color=colors['text']
+               )
+    chart1 = plot({'data':fig9},output_type='div')
     area_chart = plot({'data':line_plot},output_type='div')
     charts = plot({'data':fig4},output_type='div')
     pie_chart = plot({'data':fig},output_type='div')
-    context = {'bar_graph':charts,'pie_graph':pie_chart,'area_graph':area_chart,'field_data':field_data}
+    context = {'bar_graph':charts,'pie_graph':pie_chart,'area_graph':area_chart,'box_graph':chart1,'field_data':field_data}
     return HttpResponse(json.dumps(context),content_type='application/json')
 
 def add_categorical_legend(folium_map, title, colors, labels):

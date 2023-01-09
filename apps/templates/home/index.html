@@ -130,7 +130,7 @@
                   </label>
                   <label class="btn btn-sm btn-primary btn-simple radio_wrap" id="radio_wrap" data-radio="radio_3">
                     <input type="radio" class="d-none" name="options">
-                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block"></span>
+                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Soil Temprature</span>
                     <span class="d-block d-sm-none">
                       <i class="tim-icons icon-tap-02"></i>
                     </span>
@@ -175,9 +175,9 @@
                 </div>
               </div>
               <div class="radio_content radio_3">  
-                <div id="graph"></div>
-                <div id="graphload">
-                  {{bar|safe}}
+                <div id="boxgraph"></div>
+                <div id="boxgraphload">
+                  {{box|safe}}
                 </div>
               </div>
               </div>
@@ -303,10 +303,13 @@
            $("#pie_graphload").empty();
            $("#areagraph").empty();
            $("#areagraphload").empty();
+           $("#boxgraph").empty();
+           $("#boxgraphload").empty();
            $("#body_data").empty();
            $("#graph").append(data.bar_graph);
            $("#pie_graph").append(data.pie_graph);
            $("#areagraph").append(data.area_graph);
+           $("#boxgraph").append(data.box_graph);
            data.field_data.forEach(function (item, index){
             console.log(item,index);
             $("#body_data").append('<tr><td>'+item[0]+'</td><td>'+item[1]+'</td><td>'+item[2]+'</td><td>'+item[3]+'</td></tr>');
