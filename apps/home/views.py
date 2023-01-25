@@ -1153,6 +1153,7 @@ def show_graphs(request):
    field_level_res = eval(response_orders.content)
    field_actual_evapotranspiration_list = []
    field_name_list = []
+   data_list = ''
    for i in field_level_res:
          field_uuid = i
          field_level_vals = field_level_res[field_uuid]
