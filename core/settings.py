@@ -32,7 +32,8 @@ INSTALLED_APPS = [
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'apps.home',
     'apps.authentication',
-    'corsheaders',  # Enable the inner home (home)
+    'corsheaders',
+    'bootstrap_modal_forms',  
 ]
 
 MIDDLEWARE = [

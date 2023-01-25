@@ -16,6 +16,7 @@ urlpatterns = [
     path('map/',views.map,name='map'),
     path('map_change/',views.map_change,name='map_change'),
     path('pixel_map/',views.pixel_map,name='map_pixel'),
+    path('show_graph/', views.show_graphs, name='show_graphs'),
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
 

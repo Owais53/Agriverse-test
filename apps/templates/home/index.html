@@ -28,7 +28,8 @@
     vertical-align: middle;
     margin: 5px 10px 5px 0;
     padding: 10px;
-    background-color: #fff;
+    background-color: #1e1e2f;
+    color:#ddd;
     border: 1px solid #ddd;
   }
   
@@ -64,55 +65,51 @@
 {% block content %}
 
     <div class="row">
-      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
-        <div class="davidboxshadows">
-          <div class="card">
-            <div class="card-body bg-primary text-white text-center">
-              <h2 id="TotalNetworks">3</h2>
-              <h2>Companies</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
-        <div class="davidboxshadows">
-          <div class="card">
-            <div class="card-body bg-success text-white text-center">
-              <h2 id="TotalUsers">{{user_count}}</h2>
-              <h2>Users</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
-        <div class="davidboxshadows">
-          <div class="card">
-            <div class="card-body bg-primary text-white text-center">
-              <h2 id="TotalFields">5</h2>
-              <h2>Fields</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
-        <div class="davidboxshadows" >
-          <div class="card">
-            <div class="card-body bg-warning text-white text-center">
-              <h2 id="TotalOrders">3</h2>
-              <h2>Orders</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-12">
+       <div class="col-12">
         <div class="card card-chart">
-          <div class="card-header ">
+          <div class="card-header">
             <div class="row">
               <div class="col-sm-6 text-left">
                 <h5 class="card-category">Farms</h5>
                 <h2 class="card-title">Performance</h2>
               </div>
-              <div class="col-sm-6">
+              <div  class="form-inline">
+               
+                <label for="dates">Select Date:</label>
+                <select name="dates" id="dates" onchange="change_graph()"> 
+                  <option value="20221223">23-12-2022</option>
+                  <option value="20221224" selected>24-12-2022</option>
+                  <option value="20221225">25-12-2022</option>    
+               </select>
+               <label for="orders">Select Order:</label>
+                <select name="orders" id="orders" onchange="change_graph()"> 
+                  <option value="all" selected>All</option>
+                  <option value="6f32f9ce-5266-4d68-b6f1-b314e31a071f">3103</option>
+                  <option value="30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f">3099</option>
+                  <option value="6809fe46-5bfc-4c5c-8e90-b267c705be2e">3097</option> 
+               </select>
+               <div class="card-body">
+                <div class="chart-area">
+                  <div id="content">
+                    <div id="areadategraph"></div>
+                    <div id="areadategraphload">
+                     {{area_graph_date|safe}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+             
+            </div>
+          </div>
+        </div>
+        </div>
+      <div class="col-12">
+        <div class="card card-chart">
+          <div class="card-header ">
+            <div class="row">
+              
+              <div  style="margin-left:50px;" class="col-sm-6">
                 <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
                   <label class="btn btn-sm btn-primary btn-simple active radio_wrap" id="radio_wrap" data-radio="radio_1">
                     <input type="radio" name="options" checked>
@@ -137,21 +134,7 @@
                   </label>
                 </div>
               </div>
-              <div style="margin-right:40px;" class="form-inline">
-                <label for="dates">Select Date:</label>
-                <select name="dates" id="dates" onchange="change_graph()"> 
-                  <option value="20221223">23-12-2022</option>
-                  <option value="20221224" selected>24-12-2022</option>
-                  <option value="20221225">25-12-2022</option>    
-               </select>
-               <label for="orders">Select Order:</label>
-                <select name="orders" id="orders" onchange="change_graph()"> 
-                  <option value="all" selected>All</option>
-                  <option value="6f32f9ce-5266-4d68-b6f1-b314e31a071f">3103</option>
-                  <option value="30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f">3099</option>
-                  <option value="6809fe46-5bfc-4c5c-8e90-b267c705be2e">3097</option> 
-               </select>
-              </div>
+            
               
               
             </div>
@@ -302,13 +285,16 @@
            $("#pie_graph").empty();
            $("#pie_graphload").empty();
            $("#areagraph").empty();
+           $("#areadategraph").empty();
            $("#areagraphload").empty();
+           $("#areadategraphload").empty();
            $("#boxgraph").empty();
            $("#boxgraphload").empty();
            $("#body_data").empty();
            $("#graph").append(data.bar_graph);
            $("#pie_graph").append(data.pie_graph);
            $("#areagraph").append(data.area_graph);
+           $("#areadategraph").append(data.area_graph_date);
            $("#boxgraph").append(data.box_graph);
            data.field_data.forEach(function (item, index){
             console.log(item,index);

@@ -3,14 +3,24 @@
 {% block title %} Login {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<style>
+  .video-bg{
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      max-width: 100%;
+      min-height: 100;
+  }
+</style>
+{% endblock stylesheets %}
 
 {% block content %}
-
+        
         <div class="row">
           <div class="col-md-8">
             <div class="card">
-
+             
               <form role="form" method="post" action="">
               
                 <div class="card-header">

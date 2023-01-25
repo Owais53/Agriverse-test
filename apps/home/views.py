@@ -89,13 +89,19 @@ def index(request):
     field_actual_crop_production_list = []
     field_actual_evapotranspiration_list = []
     field_soil_water_potential_root_zone_list = []
+    precipitation_cumulative_list = []
     field_name_list = []
+    soil_moisture_holding_capacity_list = []
+    dates_list = []
     vegetation_cover_list = []
     soil_temperature_list = []
     date_list = []
     for i in field_3103:
       field_3103_vals = field_3103[i]
       field_data.append([field_3103_vals['name'],field_3103_vals['date'],field_3103_vals['vegetation_cover'],field_3103_vals['soil_temperature']])
+      soil_moisture_holding_capacity_list.append(field_3103_vals['soil_moisture_holding_capacity'])
+      dates_list.append(field_3103_vals['date'])
+      precipitation_cumulative_list.append(field_3103_vals['precipitation_cumulative'])
       field_actual_crop_production_list.append(field_3103_vals['actual_crop_production'])
       field_actual_evapotranspiration_list.append(field_3103_vals['actual_evapotranspiration'])
       field_soil_water_potential_root_zone_list.append(field_3103_vals['soil_water_potential_root_zone'])
@@ -107,6 +113,8 @@ def index(request):
        field_3099_vals = field_3099[i]
        field_data.append([field_3099_vals['name'],field_3099_vals['date'],field_3099_vals['vegetation_cover'],field_3099_vals['soil_temperature']])
        field_actual_crop_production_list.append(field_3099_vals['actual_crop_production'])
+       soil_moisture_holding_capacity_list.append(field_3099_vals['soil_moisture_holding_capacity'])
+       dates_list.append(field_3099_vals['date'])
        field_actual_evapotranspiration_list.append(field_3099_vals['actual_evapotranspiration'])
        field_soil_water_potential_root_zone_list.append(field_3099_vals['soil_water_potential_root_zone'])
        field_name_list.append(field_3099_vals['name'])
@@ -117,6 +125,8 @@ def index(request):
        field_3097_vals = field_3097[i]
        field_data.append([field_3097_vals['name'],field_3097_vals['date'],field_3097_vals['vegetation_cover'],field_3097_vals['soil_temperature']])
        field_actual_crop_production_list.append(field_3097_vals['actual_crop_production'])
+       soil_moisture_holding_capacity_list.append(field_3097_vals['soil_moisture_holding_capacity'])
+       dates_list.append(field_3097_vals['date'])
        field_actual_evapotranspiration_list.append(field_3097_vals['actual_evapotranspiration'])
        field_soil_water_potential_root_zone_list.append(field_3097_vals['soil_water_potential_root_zone'])
        field_name_list.append(field_3097_vals['name'])
@@ -203,6 +213,7 @@ def index(request):
                 paper_bgcolor=colors['background'],
                 font_color=colors['text']
                )
+      
     chart1 = plot({'data':fig9},output_type='div')
     charts = plot({'data':fig4},output_type='div')
     line_plot_obj = plot({'data':fig2},output_type='div')
@@ -275,8 +286,10 @@ def change_graphs(request):
     field_actual_crop_production_list = []
     field_actual_evapotranspiration_list = []
     field_soil_water_potential_root_zone_list = []
+    soil_moisture_holding_capacity_list = []
     soil_temprature_list = []
     field_name_list = []
+    dates_list = []
     field_data = []
     field_3103 = False
     field_3099 = False
@@ -305,6 +318,8 @@ def change_graphs(request):
       for i in field_3103:
         field_3103_vals = field_3103[i]
         soil_temprature_list.append(field_3103_vals['soil_temperature'])
+        soil_moisture_holding_capacity_list.append(field_3103_vals['soil_moisture_holding_capacity'])
+        dates_list.append(field_3103_vals['date'])
         field_data.append([field_3103_vals['name'],field_3103_vals['date'],field_3103_vals['vegetation_cover'],field_3103_vals['soil_temperature']])
         field_actual_crop_production_list.append(field_3103_vals['actual_crop_production'])
         field_actual_evapotranspiration_list.append(field_3103_vals['actual_evapotranspiration'])
@@ -314,6 +329,8 @@ def change_graphs(request):
       for i in field_3099:
        field_3099_vals = field_3099[i]
        soil_temprature_list.append(field_3099_vals['soil_temperature'])
+       soil_moisture_holding_capacity_list.append(field_3099_vals['soil_moisture_holding_capacity'])
+       dates_list.append(field_3099_vals['date'])
        field_data.append([field_3099_vals['name'],field_3099_vals['date'],field_3099_vals['vegetation_cover'],field_3099_vals['soil_temperature']])
        field_actual_crop_production_list.append(field_3099_vals['actual_crop_production'])
        field_actual_evapotranspiration_list.append(field_3099_vals['actual_evapotranspiration'])
@@ -323,12 +340,14 @@ def change_graphs(request):
       for i in field_3097:
        field_3097_vals = field_3097[i]
        soil_temprature_list.append(field_3097_vals['soil_temperature'])
+       soil_moisture_holding_capacity_list.append(field_3097_vals['soil_moisture_holding_capacity'])
+       dates_list.append(field_3097_vals['date'])
        field_data.append([field_3097_vals['name'],field_3097_vals['date'],field_3097_vals['vegetation_cover'],field_3097_vals['soil_temperature']])
        field_actual_crop_production_list.append(field_3097_vals['actual_crop_production'])
        field_actual_evapotranspiration_list.append(field_3097_vals['actual_evapotranspiration'])
        field_soil_water_potential_root_zone_list.append(field_3097_vals['soil_water_potential_root_zone'])
        field_name_list.append(field_3097_vals['name'])
-    date_list = ['2022-12-23','2022-12-24','2022-12-25']
+    #date_list = ['2022-12-23','2022-12-24','2022-12-25']
     df = pd.DataFrame({
                 "fields_name": field_name_list,
                 "actual_evapotranspiration": field_actual_evapotranspiration_list
@@ -386,13 +405,164 @@ def change_graphs(request):
                 plot_bgcolor=colors['background'],
                 paper_bgcolor=colors['background'],
                 font_color=colors['text']
-               )
+               ) 
     chart1 = plot({'data':fig9},output_type='div')
     area_chart = plot({'data':line_plot},output_type='div')
     charts = plot({'data':fig4},output_type='div')
     pie_chart = plot({'data':fig},output_type='div')
     context = {'bar_graph':charts,'pie_graph':pie_chart,'area_graph':area_chart,'box_graph':chart1,'field_data':field_data}
     return HttpResponse(json.dumps(context),content_type='application/json')
+
+def get_all_dates_data(selected_field):
+    token = get_oauth2_token()
+    headers = {"accept":"application/json","authorization":"Bearer "+token+""}
+    url_field_data_3103_23 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',order_uuid = '6f32f9ce-5266-4d68-b6f1-b314e31a071f',date = '20221223')
+    url_field_data_3099_23 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ac082ccd-4605-4a51-b272-fc4856cade6c',order_uuid = '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f',date = '20221223')
+    url_field_data_3097_23 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',order_uuid = '6809fe46-5bfc-4c5c-8e90-b267c705be2e',date = '20221223')
+    url_field_data_3103_24 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',order_uuid = '6f32f9ce-5266-4d68-b6f1-b314e31a071f',date = '20221224')
+    url_field_data_3099_24 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ac082ccd-4605-4a51-b272-fc4856cade6c',order_uuid = '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f',date = '20221224')
+    url_field_data_3097_24 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',order_uuid = '6809fe46-5bfc-4c5c-8e90-b267c705be2e',date = '20221224')
+    url_field_data_3103_25 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',order_uuid = '6f32f9ce-5266-4d68-b6f1-b314e31a071f',date = '20221225')
+    url_field_data_3099_25 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ac082ccd-4605-4a51-b272-fc4856cade6c',order_uuid = '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f',date = '20221225')
+    url_field_data_3097_25 ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',order_uuid = '6809fe46-5bfc-4c5c-8e90-b267c705be2e',date = '20221225')
+    response_field_3103_23 = requests.get(url=url_field_data_3103_23,headers=headers)
+    response_field_3099_23 = requests.get(url=url_field_data_3099_23,headers=headers)
+    response_field_3097_23 = requests.get(url=url_field_data_3097_23,headers=headers)
+    response_field_3103_24 = requests.get(url=url_field_data_3103_24,headers=headers)
+    response_field_3099_24 = requests.get(url=url_field_data_3099_24,headers=headers)
+    response_field_3097_24 = requests.get(url=url_field_data_3097_24,headers=headers)
+    response_field_3103_25 = requests.get(url=url_field_data_3103_25,headers=headers)
+    response_field_3099_25 = requests.get(url=url_field_data_3099_25,headers=headers)
+    response_field_3097_25 = requests.get(url=url_field_data_3097_25,headers=headers)
+    field_3103_23 = response_field_3103_23.json()
+    field_3099_23 = response_field_3099_23.json()
+    field_3097_23 = response_field_3097_23.json()
+    field_3103_24 = response_field_3103_24.json()
+    field_3099_24 = response_field_3099_24.json()
+    field_3097_24 = response_field_3097_24.json()
+    field_3103_25 = response_field_3103_25.json()
+    field_3099_25 = response_field_3099_25.json()
+    field_3097_25 = response_field_3097_25.json()
+    data_list = []
+    dry_matter_production_cumulative_list = []
+    water_unlimited_dry_matter_production_cumulative_list = []
+    attainable_production_cumulative_list = []
+    vegetation_cover_list = []
+    field_name = []
+    if field_3103_23 != False:
+      for i in field_3103_23:
+        field_3103_vals_23 = field_3103_23[i]
+        field_name.append(field_3103_vals_23['name'])
+        dry_matter_production_cumulative_list.append({'name':field_3103_vals_23['name'],'crop_production_cumulative':field_3103_vals_23['crop_production_cumulative']})
+        water_unlimited_dry_matter_production_cumulative_list.append({'name':field_3103_vals_23['name'],'water_unlimited_crop_production':field_3103_vals_23['water_unlimited_crop_production']})
+        attainable_production_cumulative_list.append({'name':field_3103_vals_23['name'],'attainable_crop_production':field_3103_vals_23['attainable_crop_production']})
+        vegetation_cover_list.append({'name':field_3103_vals_23['name'],'vegetation_cover':field_3103_vals_23['vegetation_cover']})
+        data_list.append([field_3103_vals_23['date'],field_3103_vals_23['name'],field_3103_vals_23['soil_moisture_holding_capacity']])
+    if field_3099_23 != False:
+      for i in field_3099_23:
+       field_3099_vals_23 = field_3099_23[i]
+       field_name.append(field_3099_vals_23['name'])
+       dry_matter_production_cumulative_list.append({'name':field_3099_vals_23['name'],'crop_production_cumulative':field_3099_vals_23['crop_production_cumulative']})
+       water_unlimited_dry_matter_production_cumulative_list.append({'name':field_3099_vals_23['name'],'water_unlimited_crop_production':field_3099_vals_23['water_unlimited_crop_production']})
+       attainable_production_cumulative_list.append({'name':field_3099_vals_23['name'],'attainable_crop_production':field_3099_vals_23['attainable_crop_production']})
+       vegetation_cover_list.append({'name':field_3099_vals_23['name'],'vegetation_cover':field_3099_vals_23['vegetation_cover']})
+       data_list.append([field_3099_vals_23['date'], field_3099_vals_23['name'],field_3099_vals_23['soil_moisture_holding_capacity']])
+    if field_3097_23 != False:
+      for i in field_3097_23:
+        field_3097_vals_23 = field_3097_23[i]  
+        field_name.append(field_3097_vals_23['name'])
+        dry_matter_production_cumulative_list.append({'name':field_3097_vals_23['name'],'crop_production_cumulative':field_3097_vals_23['crop_production_cumulative']})
+        water_unlimited_dry_matter_production_cumulative_list.append({'name':field_3097_vals_23['name'],'water_unlimited_crop_production':field_3097_vals_23['water_unlimited_crop_production']})
+        attainable_production_cumulative_list.append({'name':field_3097_vals_23['name'],'attainable_crop_production':field_3097_vals_23['attainable_crop_production']})
+        vegetation_cover_list.append({'name':field_3097_vals_23['name'],'vegetation_cover':field_3097_vals_23['vegetation_cover']})
+        data_list.append([field_3097_vals_23['date'], field_3097_vals_23['name'],field_3097_vals_23['soil_moisture_holding_capacity']])
+    if field_3103_24 != False:
+      for i in field_3103_24:
+        field_3103_vals_24 = field_3103_24[i]
+        field_name.append(field_3103_vals_24['name'])
+        dry_matter_production_cumulative_list.append({'name':field_3103_vals_24['name'],'crop_production_cumulative':field_3103_vals_24['crop_production_cumulative']})
+        water_unlimited_dry_matter_production_cumulative_list.append({'name':field_3103_vals_24['name'],'water_unlimited_crop_production':field_3103_vals_24['water_unlimited_crop_production']})
+        attainable_production_cumulative_list.append({'name':field_3103_vals_24['name'],'attainable_crop_production':field_3103_vals_24['attainable_crop_production']})
+        vegetation_cover_list.append({'name':field_3103_vals_24['name'],'vegetation_cover':field_3103_vals_24['vegetation_cover']})
+        data_list.append([field_3103_vals_24['date'],field_3103_vals_24['name'],field_3103_vals_24['soil_moisture_holding_capacity']])
+    if field_3099_24 != False:
+      for i in field_3099_24:
+       field_3099_vals_24 = field_3099_24[i]
+       field_name.append(field_3099_vals_24['name'])
+       dry_matter_production_cumulative_list.append({'name':field_3099_vals_24['name'],'crop_production_cumulative':field_3099_vals_24['crop_production_cumulative']})
+       water_unlimited_dry_matter_production_cumulative_list.append({'name':field_3099_vals_24['name'],'water_unlimited_crop_production':field_3099_vals_24['water_unlimited_crop_production']})
+       attainable_production_cumulative_list.append({'name':field_3099_vals_24['name'],'attainable_crop_production':field_3099_vals_24['attainable_crop_production']})
+       vegetation_cover_list.append({'name':field_3099_vals_24['name'],'vegetation_cover':field_3099_vals_24['vegetation_cover']})
+       data_list.append([field_3099_vals_24['date'], field_3099_vals_24['name'],field_3099_vals_24['soil_moisture_holding_capacity']])
+    if field_3097_24 != False:
+      for i in field_3097_24:
+        field_3097_vals_24 = field_3097_24[i]  
+        field_name.append(field_3097_vals_24['name'])
+        dry_matter_production_cumulative_list.append({'name':field_3097_vals_24['name'],'crop_production_cumulative':field_3097_vals_24['crop_production_cumulative']})
+        water_unlimited_dry_matter_production_cumulative_list.append({'name':field_3097_vals_24['name'],'water_unlimited_crop_production':field_3097_vals_24['water_unlimited_crop_production']})
+        attainable_production_cumulative_list.append({'name':field_3097_vals_24['name'],'attainable_crop_production':field_3097_vals_24['attainable_crop_production']})
+        vegetation_cover_list.append({'name':field_3097_vals_24['name'],'vegetation_cover':field_3097_vals_24['vegetation_cover']})
+        data_list.append([field_3097_vals_24['date'], field_3097_vals_24['name'],field_3097_vals_24['soil_moisture_holding_capacity']])
+    if field_3103_25 != False:
+      for i in field_3103_25:
+        field_3103_vals_25 = field_3103_25[i]
+        field_name.append(field_3103_vals_25['name'])
+        dry_matter_production_cumulative_list.append({'name':field_3103_vals_25['name'],'crop_production_cumulative':field_3103_vals_25['crop_production_cumulative']})
+        water_unlimited_dry_matter_production_cumulative_list.append({'name':field_3103_vals_25['name'],'water_unlimited_crop_production':field_3103_vals_25['water_unlimited_crop_production']})
+        attainable_production_cumulative_list.append({'name':field_3103_vals_25['name'],'attainable_crop_production':field_3103_vals_25['attainable_crop_production']})
+        vegetation_cover_list.append({'name':field_3103_vals_25['name'],'vegetation_cover':field_3103_vals_25['vegetation_cover']})
+        data_list.append([field_3103_vals_25['date'],field_3103_vals_25['name'],field_3103_vals_25['soil_moisture_holding_capacity']])
+    if field_3099_25 != False:
+      for i in field_3099_25:
+       field_3099_vals_25 = field_3099_25[i]
+       field_name.append(field_3099_vals_25['name'])
+       dry_matter_production_cumulative_list.append({'name':field_3099_vals_25['name'],'crop_production_cumulative':field_3099_vals_25['crop_production_cumulative']})
+       water_unlimited_dry_matter_production_cumulative_list.append({'name':field_3099_vals_25['name'],'water_unlimited_crop_production':field_3099_vals_25['water_unlimited_crop_production']})
+       attainable_production_cumulative_list.append({'name':field_3099_vals_25['name'],'attainable_crop_production':field_3099_vals_25['attainable_crop_production']})
+       vegetation_cover_list.append({'name':field_3099_vals_25['name'],'vegetation_cover':field_3099_vals_25['vegetation_cover']})
+       data_list.append([field_3099_vals_25['date'], field_3099_vals_25['name'],field_3099_vals_25['soil_moisture_holding_capacity']])
+    if field_3097_25 != False:
+      for i in field_3097_25:
+        field_3097_vals_25 = field_3097_25[i]
+        field_name.append(field_3097_vals_25['name'])
+        dry_matter_production_cumulative_list.append({'name':field_3097_vals_25['name'],'crop_production_cumulative':field_3097_vals_25['crop_production_cumulative']})
+        water_unlimited_dry_matter_production_cumulative_list.append({'name':field_3097_vals_25['name'],'water_unlimited_crop_production':field_3097_vals_25['water_unlimited_crop_production']})
+        attainable_production_cumulative_list.append({'name':field_3097_vals_25['name'],'attainable_crop_production':field_3097_vals_25['attainable_crop_production']})
+        vegetation_cover_list.append({'name':field_3097_vals_25['name'],'vegetation_cover':field_3097_vals_25['vegetation_cover']})  
+        data_list.append([field_3097_vals_25['date'], field_3097_vals_25['name'],field_3097_vals_25['soil_moisture_holding_capacity']])
+        final_crop_production_cumulative_list = []
+        final_water_unlimited_dry_matter_production_list = []
+        final_dry_matter_production_cumulative_list = []
+        final_vegetation_cover_list = []
+        for x in dry_matter_production_cumulative_list:
+           if x['name'] == selected_field:
+             final_crop_production_cumulative_list.append(x['crop_production_cumulative'])
+        for y in water_unlimited_dry_matter_production_cumulative_list:
+          if y['name'] == selected_field:
+           final_water_unlimited_dry_matter_production_list.append(y['water_unlimited_crop_production'])
+        for z in attainable_production_cumulative_list:
+           if z['name'] == selected_field:
+            final_dry_matter_production_cumulative_list.append(z['attainable_crop_production'])
+        for i in vegetation_cover_list:
+           if i['name'] == selected_field:
+             final_vegetation_cover_list.append(i['vegetation_cover'])
+
+
+    return data_list,final_crop_production_cumulative_list,final_water_unlimited_dry_matter_production_list,final_dry_matter_production_cumulative_list,final_vegetation_cover_list
+
+def area_graph_date(data_list,crop_production,field_name_list,soil_moisture_holding_capacity_list):
+     dates_list = ['2022-12-23','2022-12-24','2022-12-25','2022-12-24','2022-12-23']
+     df = pd.DataFrame(data_list,columns={
+                "Date",
+                "field_name",
+                "Holding_Capacity"
+                
+            })             
+     fig = px.line(df, x='Holding_Capacity', y='Date',color='field_name')
+     fig.update_xaxes(fixedrange=True)
+     fig.update_xaxes(tickformat="%b %d\n%Y")
+     fig.update_xaxes(dtick='M1')
+     return fig
 
 def add_categorical_legend(folium_map, title, colors, labels):
     color_by_label = dict(zip(labels, colors))
@@ -490,6 +660,87 @@ def add_categorical_legend(folium_map, title, colors, labels):
     folium_map.get_root().header.add_child(folium.Element(script + css))
 
     return folium_map
+
+
+def add_modal(folium_map):
+  
+    
+    legend_html = f"""
+    <div id="myModalgraph" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-target="#myModal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Modal body text goes here.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    """
+    script = f"""
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+      """
+   
+
+    css = """
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style type='text/css'>
+      .modal:before {
+            content: '';
+            display: inline-block;
+            height: 100%;
+            margin-left:-300px;
+            vertical-align: middle;
+        }
+          
+        .modal-dialog {
+            display: inline-block;
+            vertical-align: middle;
+        }
+          
+        .modal .modal-content {
+            padding: 20px 20px 20px 20px;
+            -webkit-animation-name: modal-animation;
+            -webkit-animation-duration: 0.5s;
+            animation-name: modal-animation;
+            animation-duration: 0.5s;
+        }
+          
+        @-webkit-keyframes modal-animation {
+            from {
+                top: -100px;
+                opacity: 0;
+            }
+            to {
+                top: 0px;
+                opacity: 1;
+            }
+        }
+          
+        @keyframes modal-animation {
+            from {
+                top: -100px;
+                opacity: 0;
+            }
+            to {
+                top: 0px;
+                opacity: 1;
+            }
+        }
+    </style>
+    """
+    folium_map.get_root().header.add_child(folium.Element(legend_html + css))
+
+    return folium_map
+
 
 def get_oauth2_token():
     auth_url = "https://portal.irriwatch.com/oauth/v2/token"
@@ -799,6 +1050,7 @@ def map(request):
      for i in list_result[0]['fields']['features']:  
          fields_geojson = list_result[0]['fields']['features'][count]['geometry']
          field_uuid = list_result[0]['fields']['features'][count]['properties']['uuid'] 
+         field_name = list_result[0]['fields']['features'][count]['properties']['name'] 
          style_function =  {
              "fillColor": "#D3D3D3",
             }
@@ -819,16 +1071,34 @@ def map(request):
             }
          count += 1
          if selected_field_level_val != False:
-          folium.GeoJson(fields_geojson,style_function=lambda x, fillColor=style_function['fillColor']:{
+          geo_json = folium.GeoJson(fields_geojson,style_function=lambda x, fillColor=style_function['fillColor']:{
                 "fillColor": fillColor,
                 'fillOpacity': 2 
-             }).add_to(m)
+             }).add_to(m)     
+          geo_json.add_child(folium.Popup('<button id="btnopengraphs" type="button" class="btn btn-primary">'+field_name+'</button>'))
          else:
-          folium.GeoJson(fields_geojson,style_function=lambda x, fillColor=style_function['fillColor']:{
+          #m = add_modal(m)
+          geo_json = folium.GeoJson(fields_geojson,style_function=lambda x, fillColor=style_function['fillColor']:{
                 "fillColor": fillColor,
                 'fillOpacity': 0
-             }).add_to(m)
+                }).add_to(m)
+          html="""
+           <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+           <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>   
+           <script type="text/javascript">
+            function opengraphsmodal(id){ 
+              window.top.postMessage(id, '*');
+               
+            }
+           </script>
+      
+           <button id="""+field_uuid+""" onclick="opengraphsmodal(this.id)"  type="button"  class="btn btn-primary">"""+field_name+"""</button>
+          """          
+          iframe = folium.IFrame(html=html, width=100, height=70)
+          geo_json.add_child(folium.Popup(iframe,max_width=100))
          m.fit_bounds(m.get_bounds(), padding=(10, 10))
+         
      if selected_field_level_val != False:
         if selected_field_level_val != 'none' and selected_order_val != 'none' and selected_date != 'none':
             m = set_range_legend(m,selected_field_level_val,selected_order_val,selected_date)
@@ -861,6 +1131,51 @@ def map(request):
     
   
     return render(request,'home/ui-maps.html',context)
+
+def show_graphs(request):
+   field_uuid_data = request.POST.get('field_uid',False)
+   #val = id
+   token = get_oauth2_token()
+   headers = {"accept":"application/json","authorization":"Bearer "+token+""}
+   selected_order_val = request.POST.get('selected_order',False)
+   selected_date = request.POST.get('selected_date',False)
+   if selected_order_val == '6f32f9ce-5266-4d68-b6f1-b314e31a071f':
+    url_field_data ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',order_uuid = selected_order_val,date = selected_date)
+   elif selected_order_val == '30fc75c3-a68e-4ba3-95a0-a9bf3e6d2c4f':
+      url_field_data ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ac082ccd-4605-4a51-b272-fc4856cade6c',order_uuid = selected_order_val,date = selected_date)
+   elif selected_order_val == "6809fe46-5bfc-4c5c-8e90-b267c705be2e":
+      url_field_data ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = 'ef9ff8a0-e81a-43c1-af24-0ecdc4d87b28',order_uuid = selected_order_val,date = selected_date)
+   else:
+       url_field_data ='https://api.irriwatch.com/api/v1/company/{company_uuid}/order/{order_uuid}/result/{date}/field_level'.format(company_uuid = '06db5883-48bd-4350-93e7-0e0ae69fe94c',order_uuid = selected_order_val,date = selected_date) 
+   response_orders = requests.get(url=url_field_data,headers=headers)
+   count = 0
+   field_name = ''
+   field_level_res = eval(response_orders.content)
+   field_actual_evapotranspiration_list = []
+   field_name_list = []
+   for i in field_level_res:
+         field_uuid = i
+         field_level_vals = field_level_res[field_uuid]
+         if field_uuid_data == field_uuid:
+            field_name = field_level_vals['name']
+            field_name_list.append(field_level_vals['name'])
+            field_actual_evapotranspiration_list.append(field_level_vals['actual_evapotranspiration'])
+            data_list = get_all_dates_data(field_name)
+            break
+         count += 1
+   df = pd.DataFrame({
+                "fields_name": field_name_list,
+                "actual_evapotranspiration": field_actual_evapotranspiration_list
+            })
+   fig = px.pie(df, values='actual_evapotranspiration', names='fields_name', hole=.3,height=300)
+   fig.update_layout(
+                title_text='Actual Evapotranspiration per fields'
+                
+               )
+   pie_chart = plot({'data':fig},output_type='div')
+   
+   context = {'field_name': field_name,'pie_graph_modal':pie_chart,'crop_production_cumulative':data_list[1],'water_unlimited_crop_production':data_list[2],'attainable_crop_production':data_list[3],'vegetation_cover':data_list[4]}
+   return JsonResponse(context)
 
 def map_change(request):
   if request.method == "POST":
@@ -926,6 +1241,7 @@ def map_change(request):
     for i in list_result[0]['fields']['features']:  
          fields_geojson = list_result[0]['fields']['features'][count]['geometry']
          field_uuid = list_result[0]['fields']['features'][count]['properties']['uuid'] 
+         field_name = list_result[0]['fields']['features'][count]['properties']['name']
          style_function =  {
              "fillColor": "#D3D3D3",
             }
@@ -946,15 +1262,44 @@ def map_change(request):
             }
          count += 1
          if selected_field_level_val != False:
-          folium.GeoJson(fields_geojson,style_function=lambda x, fillColor=style_function['fillColor']:{
+          geo_json = folium.GeoJson(fields_geojson,style_function=lambda x, fillColor=style_function['fillColor']:{
                 "fillColor": fillColor,
                 'fillOpacity': 2 
            }).add_to(m)
+          html="""
+           <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+           <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>   
+           <script type="text/javascript">
+            function opengraphsmodal(id){ 
+              window.top.postMessage(id, '*');
+            }
+           </script>
+      
+           <button id="""+field_uuid+""" onclick="opengraphsmodal(this.id)"  type="button"  class="btn btn-primary">"""+field_name+"""</button>
+          """          
+          iframe = folium.IFrame(html=html, width=100, height=70)
+          geo_json.add_child(folium.Popup(iframe,max_width=100))
          else:
-          folium.GeoJson(fields_geojson,style_function=lambda x, fillColor=style_function['fillColor']:{
+          geo_json = folium.GeoJson(fields_geojson,style_function=lambda x, fillColor=style_function['fillColor']:{
                 "fillColor": fillColor,
                 'fillOpacity': 0
              }).add_to(m)
+          html="""
+           <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+           <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>   
+           <script type="text/javascript">
+            function opengraphsmodal(id){ 
+              window.top.postMessage(id, '*');
+               
+            }
+           </script>
+      
+           <button id="""+field_uuid+""" onclick="opengraphsmodal(this.id)"  type="button"  class="btn btn-primary">"""+field_name+"""</button>
+          """          
+          iframe = folium.IFrame(html=html, width=100, height=70)
+          geo_json.add_child(folium.Popup(iframe,max_width=100)) 
          m.fit_bounds(m.get_bounds(), padding=(10, 10))
     if selected_field_level_val != False:
         if selected_field_level_val != 'none' and selected_order_val != 'none' and selected_date != 'none':
@@ -1002,7 +1347,23 @@ def pixel_map(request):
         count = 0
         for i in list_result[0]['fields']['features']:
           fields_geojson = list_result[0]['fields']['features'][count]['geometry']
-          folium.GeoJson(fields_geojson,style_function=lambda x:{'fillOpacity': 0}).add_to(map)
+          field_uuid = list_result[0]['fields']['features'][count]['properties']['uuid'] 
+          field_name = list_result[0]['fields']['features'][count]['properties']['name']
+          geo_json = folium.GeoJson(fields_geojson,style_function=lambda x:{'fillOpacity': 0}).add_to(map)
+          html="""
+           <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+           <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>   
+           <script type="text/javascript">
+            function opengraphsmodal(id){ 
+              window.top.postMessage(id, '*');
+            }
+           </script>
+      
+           <button id="""+field_uuid+""" onclick="opengraphsmodal(this.id)"  type="button"  class="btn btn-primary">"""+field_name+"""</button>
+          """          
+          iframe = folium.IFrame(html=html, width=100, height=70)
+          geo_json.add_child(folium.Popup(iframe,max_width=100))
           count += 1
     if selected_field_level_val == False or selected_field_level_val == 'none':
       if selected_pixel_level_val != 'none':

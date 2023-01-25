@@ -10,6 +10,7 @@
      crossorigin=""/>
      
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
 <style>
 
 
@@ -29,7 +30,8 @@
   vertical-align: middle;
   margin: 5px 10px 5px 0;
   padding: 10px;
-  background-color: #fff;
+  background-color: #1e1e2f;
+  color:#ddd;
   border: 1px solid #ddd;
 }
 
@@ -56,12 +58,37 @@
     align-items: stretch;
   }
 }
+.modal-dialog,
+.modal-content {
+    /* 80% of window height */
+    height: 100%;
+}
+
 </style>
+
 {% endblock stylesheets %}
 
 {% block content %}
 
 <div class="row">
+  <div id="myModalgraph" class="modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 style="color: black;" class="modal-title" id="field_name_title"></h5>
+          <button type="button" class="close" class="btn-close" data-dismiss="modal" aria-label="Close">X</button>
+        </div>
+        <div class="modal-body" >
+          <div class="graph_div" id="chartContainer"  >
+            <canvas id="myChart" style="width: 100%; height: 360px;"></canvas>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <form method="post" class="form-inline" action="">
     {% csrf_token %}
     <div>
@@ -114,7 +141,7 @@
         <div class="row">
           
         </div>
-       
+
       <div id="map"></div>
       <div id="mapload">
         {{ m | safe}}
@@ -129,14 +156,134 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script type="text/javascript">
+  function graph_create(crop_production_cumulative,water_unlimited_crop_production,attainable_crop_production,vegetation_cover){
+
+    var data = {
+      "labels": [
+      "2022-12-23",
+      "2022-12-24",
+      "2022-12-25"
+    ],
+    "datasets": [
+      {
+        "backgroundColor": "rgb(255,255,255)",
+        "borderColor": "rgb(156, 39, 176)",
+        "fill": false,
+        "data": crop_production_cumulative,
+        "id": "amount",
+        "label": "Dry Matter Production Cumulative",
+				"yAxisID":"y"
+      },
+      {
+        "backgroundColor": "rgb(255,255,255)",
+        "borderColor": "rgb(39, 176, 200)",
+        "fill": false,
+        "data":water_unlimited_crop_production,
+        "id": "amount",
+        "label": "Water Unlimited Dry Matter Production Cumulative",
+				"yAxisID":"y"
+
+      },
+      {
+        "backgroundColor": "rgb(255,255,255)",
+        "borderColor": "rgb(0, 255, 0)",
+        "fill": false,
+        "data": attainable_crop_production,
+        "id": "amount",
+        "label": "Attainable Production Cumulative",
+				"yAxisID":"y"
+
+      },
+      {
+        "backgroundColor": "rgb(255,255,255)",
+        "borderColor": "rgb(0,0,0)",
+        "fill": false,
+        "data": vegetation_cover,
+        "id": "amount",
+        "label": "Vegetation Cover",
+				"yAxisID":"y1"
+
+      }
+    ]
+   
+  };
+var options = {
+    responsive: true,
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
+    stacked: false, 
+    plugins: {
+      title: {
+        display: true,
+        text: ''
+      }
+    }, 
+    scales: {
+      y: {
+        type: 'linear',
+        display: true,
+        position: 'left'
+      },
+      y1: {
+        type: 'linear',
+        display: true,
+        position: 'right',
+        // grid line settings
+        grid: {
+          drawOnChartArea: false, // only want the grid lines for one axis to show up
+        },
+      }
+    }
+  }
+var type = "line";
+var myChart = new Chart(document.getElementById("myChart"), {options, data, type});
+
+  }
+	var eventMethod = window.addEventListener
+			? "addEventListener"
+			: "attachEvent";
+	var eventer = window[eventMethod];
+	var messageEvent = eventMethod === "attachEvent"
+		? "onmessage"
+		: "message";
+
+	eventer(messageEvent, function (e) {
+		
+		// if (e.origin !== 'http://the-trusted-iframe-origin.com') return;
+		
+    $.ajax({
+        type: 'post',
+        url: "{% url 'show_graphs' %}",
+        data:{'selected_order':$("#orders_ddl").val(),'selected_date':$("#date_ddl").val(),'field_uid':e.data,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        success: function(data) { 
+          $("#field_name_title").empty();
+          $("#field_name_title").append('Graph - '+data['field_name']);
+          $('#myModalgraph').modal("show");
+         
+          graph_create(data['crop_production_cumulative'],data['water_unlimited_crop_production'],data['attainable_crop_production'],data['vegetation_cover']);             
+    }
+       });
+      
+		 
+		
+	});
+</script>
+<script>
+
+ 
+</script>
 
   <!--  Google Maps Plugin    -->
   <!-- Place this tag in your head or just before your close body tag. -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxqHY-DeXtqK0GSM0BOvYgmSelQBhBRcE&callback=initMap&v=weekly" defer></script>-->
 
@@ -147,6 +294,7 @@
         url: "{% url 'map_change' %}",
         data:{ 'selected_order':$("#orders_ddl").val(),'selected_date':$("#date_ddl").val(),'selected_field_level':$("#field_level_ddl").val(),'pixel_level_ddl':$("#pixel_level_ddl").val(),'csrfmiddlewaretoken': '{{ csrf_token }}'},
         success: function(data) {  
+           console.log(data);
            const html = $.parseHTML(data);
            $("#mapload").empty();
            $("#map").empty();
@@ -167,12 +315,20 @@
         }
        });
       }
-    $(document).ready(function(){
-     function map_update(){
      
-               
-    }
-   
+    
+    
+    $(document).ready(function(){
+     
+    $("#triggerEvents").on("click", function(ev){
+    ev.preventDefault();
+    var modalid = $(this).data("target");
+    console.log(modalid);
+    var url = $(this).attr("href");
+    $(modalid).modal("show"); // Triggering bootstrap modal.
+
+  // Do the asynchronous part here.
+});
     })
   
     //var map = L.map("map").setView([0, 0], 5);
@@ -201,5 +357,6 @@
   //});
       
   </script>
+  
    
 {% endblock javascripts %}
